@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+ 
+.container{
+	max-width:1080px;
+
+}
+ 
+ .content{
+   padding-bottom: 0;
+ }
+ 
+ #user_container{
+    padding-top: 50px;
+ }
+ 
+ .messageContent{
+    width: 70%;
+ }
+ 
+ 
+  .messageTime{
+    width: 30%;
+ }
+ 
+ 
+ .boxed-blue{
+   background-color:#6cf;
+ }
+ 
+ 
+ .exam-padding-top{
+    padding-top: 10px;
+ }
+ 
+ 
+ .title_font{
+    font-size: larger;
+    font-weight: bold;
+ }

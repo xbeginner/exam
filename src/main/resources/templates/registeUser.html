@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common_header(~{::title},~{::link},~{::script})">
+    <meta charset="utf-8">
+	<link rel="stylesheet" href="../static/manager.css"  th:href="@{/css/manager.css}"  />
+	<script src="../static/js/manager.js" th:src="@{/js/manager.js}"></script>
+	<script type="text/javascript">
+	     initRegisterOrgs();
+	</script>
+</head>
+<body>
+    <div class="modal-dialog">
+    <form action="#" th:action="@{/manage/registerUser}"  th:object="${registeUserForm}" method="post" id="register_user_form">
+        <div class="modal-content">
+            <div class="modal-header">
+ 
+                <h4 class="modal-title" id="myModalLabel">人员注册</h4>
+            </div>
+            <div class="modal-body">
+            
+              <div class="form-group">
+			    <label>姓名</label>
+			    <input type="text" th:field="*{userName}" />
+			    <a th:if="${#fields.hasErrors('userName')}"><span th:errors="*{userName}" style="color: red;">Name Error</span></a>
+			  </div>
+			  
+			 <div class="form-group">
+			    <label>联系电话</label>
+			    <input type="text" th:field="*{tel}" />
+			    <a th:if="${#fields.hasErrors('tel')}" ><span th:errors="*{tel}" style="color: red;">Tel Error</span></a>
+			  </div>
+			  
+			 <div class="form-group">
+			    <label>身份证号</label>
+			    <input type="text" th:field="*{idcard}" />
+			     <a th:if="${#fields.hasErrors('idcard')}"  ><span th:errors="*{idcard}" style="color: red;">Address Error</span></a>
+			  </div>
+			  
+			 <div class="form-group">
+			    <label>选择机构</label>
+			   <div class="field_select">
+				    <select class="select_styled" id="org_select" name="org">
+				        
+				    </select>
+				</div>
+			  </div>
+			  
+			  
+			            
+             
+                   
+
+		            </div>
+		            <div class="modal-footer">
+		                <a  class="btn btn-default modal_button" data-dismiss="modal" onclick="window.close();">关闭</a>
+		                <button  class="btn btn-default modal_button" type="submit">提交</button>
+		            </div>
+                </form>
+        </div> 
+</body>
+</html>

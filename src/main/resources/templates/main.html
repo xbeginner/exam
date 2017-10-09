@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common_header(~{::title},~{::link},~{::script})">
+    <meta charset="utf-8">
+	<link rel="stylesheet" href="../static/main.css"  th:href="@{/css/main.css}"  />
+	<script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
+	<script type="text/javascript">
+	      initMainMenu();
+	      initExamInfo(1);
+	      initMessageInfo();
+	</script>
+</head>
+<body style="background: none">
+<div th:insert="header:: header" ></div>
+
+<!-- 如果为管理员则显示管理菜单 -->
+  <div th:if="${userInfo.role.manageLog}==1">
+    <div class="container"  id="mananger_container" >
+        <div class="content " role="main">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="topmenu">
+		                        <ul class="dropdown clearfix boxed boxed-blue"  id="menuContentUl">
+		                                
+		                        </ul>
+                      </div>
+                 </div>
+              </div>
+           </div>
+ </div>
+ </div>
+ 
+ 
+ <!-- 显示公告信息 -->
+  <div th:if="${userInfo.role.manageLog}==0">
+    <div class="container" id="message_container">
+        <div class="content " role="main">
+ <div class="panel panel-primary">
+	 <div class="panel-heading">
+	 公告信息
+	 </div>
+	 <div class="panel-body">
+				<table class="table">
+				  <thead>
+				    <tr>
+					      <th><span>公告信息</span></th>
+					      <th><span>发布时间</span></th>
+				    </tr>
+				  </thead>
+				  <tbody id="message_tbody">
+				           
+				  </tbody>
+				</table>
+		   </div>
+	    </div>
+        </div>
+ </div>
+ </div>
+ 
+ <!-- 显示考试界面 -->
+ <div class="container" id="user_container">
+ <div class="panel panel-primary">
+	 <div class="panel-heading">
+	 <span th:text=${title}>可参加测试</span>
+	 </div>
+	 <div class="panel-body">
+		
+				<table class="table">
+				  <thead>
+				    <tr>
+					      <th><span>测试名称</span></th>
+					      <th><span>测试时间</span></th>
+					      <th><span>操作</span></th>
+				    </tr>
+				  </thead>
+				  <tbody id="exam_tbody">
+				           
+				  </tbody>
+				</table>
+		   </div>
+	 </div>
+				 <div class="tf_pagination style3">
+				    <div class="inner"  id="exam_page">
+				           
+				    </div>
+				</div>
+
+ </div>
+ 
+ 
+ <div th:insert="footer :: copy" class="footer"></div>
+</body>
+ <div class="modal fade" id="showMessageModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		data-backdrop="static">
+		 <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="panel panel-default">
+						<div class="panel-body" id="message_info_div">
+							 
+					    </div>
+
+			</div>
+		  </div>
+		 </div>
+     </div>
+ </div>
+</html>

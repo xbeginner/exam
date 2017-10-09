@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: common_header(~{::title},~{::link},~{::script})">
+    <meta charset="utf-8">
+	<link rel="stylesheet" href="../static/manager.css"  th:href="@{/css/manager.css}"  />
+
+	<script src="../static/js/manager.js" th:src="@{/js/manager.js}"></script>
+	<script src="../static/js/question.js" th:src="@{/js/question.js}"></script>
+	<script type="text/javascript">
+	       initQuestionBank();
+	</script>
+</head>
+<body style="background: none">
+
+<div th:insert="header:: header" ></div>
+<div>
+<ol class="breadcrumb"  id="bread_nav">
+    <li><a href="/openMainPage">首页</a></li>
+    <li class="active">题库管理</li>
+</ol>
+
+</div>
+ <div id="warning" hidden>
+    <div class="panel panel-success">
+              <div class="panel-body">
+                  正在处理，请稍后！
+              </div>
+    </div>
+ </div>
+ <div class="container" id="question_container">
+ <div class="panel panel-success">
+			 <div class="panel-heading">
+			 <span>题库管理</span>
+			 </div>
+			 <div class="panel-body">
+					 <table class="table">
+						  <thead>
+						    <tr>
+							      <th><span>题库名称</span></th>
+							      <th><span>题库说明</span></th>
+							      <th><span>操作</span></th>
+						    </tr>
+						  </thead>
+						  <tbody id="questionbank_tbody">
+						           
+						  </tbody>
+						</table>
+			 
+			  </div>
+	     	<div class="panel-footer import_button_div" >
+	     	        <a onclick="openImportQuestionFile()" class="btn btn-green "><span>导入题目</span></a>
+	       	        <a onclick="addQuestionBank()" class="btn btn-red "><span>添加题库</span></a>
+			  </div>
+		 </div>
+ </div>
+ <div th:insert="footer :: copy" class="footer"></div>
+</body>
+ <div th:include="hidden:: hiddenAddQuestionBank"></div>
+ <div th:include="hidden:: hiddenImportQuestion"></div>
+
+</html>

@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <div class="topbar" th:fragment="header">
+          <span class="welcome_info pull-left">欢迎您: <font th:text=${userInfo.userName}></font></span>
+          <span class="time_info pull-right"><a href="/logout"><font color="white">注销登出</font></a></span>
+        </div>
+</html>
