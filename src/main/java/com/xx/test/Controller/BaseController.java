@@ -33,6 +33,7 @@ public abstract class BaseController {
 	  @Autowired
 	  protected IMenuService menuService;
 	  
+	  
 	  @Autowired
 	  protected IMessageService messageService;
 	  

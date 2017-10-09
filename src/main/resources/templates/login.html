@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="common :: common_header(~{::title},~{::link},~{::script})">
-<link rel="stylesheet" href="../static/login.css"  th:href="@{/css/login.css}"  />
+<link rel="stylesheet" href="../static/css/login.css"  th:href="@{/css/login.css}"  />
 <script src="../static/js/login.js" th:src="@{/js/login.js}"></script>
  <script>
    
@@ -16,19 +16,19 @@
  
  </script>
 </head>
-<body class="body_back">
-<div class="body_wrap">
+<body  class="body_back">
+ <div class="vertical_center">
  <form id="loginForm"  th:object="${userInfo}" >
-      <div class="container vertical_center">
+
          <div class="text_input">
-		    <input type="text" name="name" id="name" placeholder="输入用户名" th:field="*{userName}"
+		    <input type="text" name="name" id="name"   th:field="*{userName}"
 		           onfocus="changeLog(0)"  />
 		    <a id="username_log" class="error_log"></a>
 		</div>
 		
  
 		<div class="text_input">
-		    <input type="password" name="password" id="password" placeholder="输入密码" th:field="*{password}"
+		    <input type="password" name="password" id="password"   th:field="*{password}"
 		    	onfocus="changeLog(1)"  />
 		     <a id="password_log"  class="error_log"></a>
 		</div>   
@@ -41,11 +41,12 @@
 	    
  
 		<div class="button_div">  
-		   <a  id="resign_button" class="btn btn-red login_btn" onclick="openRegisteUserPage()"><span>注册</span></a>
-		   <a  id="login_button" class="btn login_btn" onclick="login()"><span>登陆</span></a>
+		<a onclick="openRegisteUserPage()" id="resign_button"  class="btn login_btn btn-icon btn-icon-right btn-icon-login btn-green"><span>注册</span></a>
+        <a onclick="login()" id="login_button" class="btn btn-icon login_btn btn-icon-right btn-icon-go"><span>登录</span></a>
+
 		</div>     
-      </div>  
+  
       </form>
- </div>
+     </div>  
 </body>
 </html>

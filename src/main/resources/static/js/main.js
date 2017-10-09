@@ -1,12 +1,15 @@
 function initMainMenu(){
- 
+   var size = 0;
    $.getJSON("/index/initMainMenu", function(data) {
 	        $("#menuContentUl").html("");//清空info内容
 	        var menuInfo="" ;
 	        $.each(data, function(i, item) {
-	        		menuInfo+="<li ><a href='"+item.url+"'><span>"+item.name+"</span></a></li>";
+	        		menuInfo+="<li class='menu_li'><a href='"+item.url+"'>"+item.name+"</a></li>";
+	        		size += 1;
 	        });
 	        $("#menuContentUl").html(menuInfo);
+	        var pxSize = 1080/size-30;
+	        $("li.menu_li").css({"width":pxSize+"px"});
 	     });
  };
  
