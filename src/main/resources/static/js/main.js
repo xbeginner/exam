@@ -93,4 +93,9 @@ function initMainMenu(){
 	 };
 	 
 	 
+	 function initMessage(){
+		  
+	 }
+	 
+	 
  

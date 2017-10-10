@@ -647,5 +647,26 @@ public class MainController extends BaseController {
 						return "操作失败，请重新检查题库模板";
 					}
 				}
+			  
+			  
+			  
+			    @GetMapping("/index/showAllTargetPaper")
+			    @ResponseBody
+			    public String showAllTargetPaper(HttpServletRequest request , HttpServletResponse response) {
+                    UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+			    	List<PaperSchema> paperList = paperSchemaService.findPaperSchemaByOrg(userInfo.getOrg().getId());
+			        String json = "[";
+			        if(paperList.size()>0){
+			        	for(PaperSchema paper:paperList){
+				        	json += "{";
+				        	json += "\"id\":"+paper.getId()+",";
+				        	json += "\"name\":\""+paper.getPaperName()+"\"";
+				        	json += "},";
+				        }
+			        	json = json.substring(0, json.length()-1);
+			        }
+			        json += "]";
+			    	return json;
+			    }
 
 }

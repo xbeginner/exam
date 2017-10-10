@@ -12,7 +12,15 @@
 	</script>
 </head>
 <body style="background: none">
-<div th:insert="header:: header" ></div>
+<div th:insert="header:: header"></div>
+
+<div class="widget-container widget-audio boxed  pull-right" > 
+     <div class="inner">
+        <div class="tagcloud clearfix">
+            <a href="#"><i class="menu-icon menu-icon-6"></i>您有新的消息</a>
+        </div>
+    </div>
+</div>
 
 <!-- 如果为管理员则显示管理菜单 -->
   <div th:if="${userInfo.role.manageLog}==1">
@@ -28,7 +36,7 @@
                  </div>
               </div>
            </div>
- </div>
+     </div>
  </div>
  
  

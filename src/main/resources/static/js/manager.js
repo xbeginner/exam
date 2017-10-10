@@ -515,6 +515,17 @@ function initOrg(parentId){
 			   $("#addMessageManageModal").modal('show');
 			   $('#addMessageForm')[0].reset();
 			   
+		         $.getJSON("/index/showAllTargetPaper", function(data) {
+					  $("#contact-name").html("");//清空info内容
+					  var messageBodyInfo = "";
+				        $.each(data, function(i, item) {
+				        	messageBodyInfo += "<option value='"+item.id+"'>"+item.name+"</option>";
+				        });
+				        $("#contact-name").html(messageBodyInfo);
+				        alert($("#contact-name").html());
+			     });
+			   
+			   
 			   $("#addMessageForm").validate({
 					rules:{
 						name:{
@@ -662,3 +673,5 @@ function initOrg(parentId){
 						 }
 				   });
 			};
+			
+ 
