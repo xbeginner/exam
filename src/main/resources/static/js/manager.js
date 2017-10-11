@@ -512,19 +512,24 @@ function initOrg(parentId){
 		
 		
 		function addMessage(){
-			   $("#addMessageManageModal").modal('show');
-			   $('#addMessageForm')[0].reset();
-			   
+ 
+			     $("#addMessageManageModal").modal('show');
+			     $('#addMessageForm')[0].reset();
+			     myNicEditor.removeInstance('nicedit-message');
+	             $('#nicedit-message').val('');
+	             myNicEditor.panelInstance('nicedit-message');
+			     jQuery("#contact-name").trigger("chosen:updated");
 		         $.getJSON("/index/showAllTargetPaper", function(data) {
-					  $("#contact-name").html("");//清空info内容
-					  var messageBodyInfo = "";
+		        	  $("#field_select_id").html("");//清空info内容
+					  var messageBodyInfo = "<label for='contact-name' class='label_title'>选择考试方案</label>";
+					  messageBodyInfo += "<select name='contact-name' id='contact-name' multiple data-placeholder='选择考试方案'>";
 				        $.each(data, function(i, item) {
 				        	messageBodyInfo += "<option value='"+item.id+"'>"+item.name+"</option>";
 				        });
-				        $("#contact-name").html(messageBodyInfo);
-				        alert($("#contact-name").html());
+				        messageBodyInfo += "</select>";
+				       $("#field_select_id").html(messageBodyInfo);
+				       $('#contact-name').chosen({ width: "100%" });
 			     });
-			   
 			   
 			   $("#addMessageForm").validate({
 					rules:{

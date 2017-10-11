@@ -107,16 +107,32 @@ public class MainController extends BaseController {
 	  @ResponseBody
 	  public String initMessageInfo(HttpServletRequest request , HttpServletResponse response){
 			     UserInfo userInfo = (UserInfo) request.getSession().getAttribute("currentUserInfo");
-			     List<Message> messages = messageService.findAllMessagesByOrg(userInfo.getOrg().getParentOrgId());
-			     String json = "[";
-			     if(messages.size()>0){
-			    	 for(Message m:messages){
-			    		 json += m.getMessageJson();
-			    		 json += ",";
-			    	 }
-			    	 json = json.substring(0, json.length()-1);
+			     List<Message> messages = new ArrayList<Message>();
+			     if(userInfo.getOrg().getParentOrgId()!=null){
+			    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrgId(),1);
+			     }else{
+			    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getId(),1);
 			     }
-			     json += "]";
+			     
+			     if(messages.size()>0){
+			    	 return "1";
+			     }else{
+			    	 List<UserPaper> userPapers = userPaperService.findUserPaperByUserId(userInfo.getId());
+			    	 if(userInfo.getOrg().getParentOrgId()!=null){
+				    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrgId(),0);
+				     }else{
+				    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getId(),0);
+				     }
+			    	 for(Message m:messages){
+			    		 Set<PaperSchema> papers = m.getPaperSchemas();
+			    		 for(UserPaper userPaper:userPapers){
+			    			 if(papers.contains(userPaper.getPaperSchema())){
+			    				 return "1";
+			    			 }
+			    		 }
+			    	 }
+			     }
+			     String json = "0";
 		         return json;
 	  }
 	  
@@ -554,12 +570,25 @@ public class MainController extends BaseController {
 			    @ResponseBody
 			    public String addMessage(HttpServletRequest request , HttpServletResponse response) {
 				         UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+				         String[] targetPapers = request.getParameterValues("contact-name");
 				         Message message = new Message();
 				         message.setName(request.getParameter("name"));
 				         message.setContent(request.getParameter("content"));
 				         message.setCreateTime(new java.sql.Date(new Date().getTime()));
 				         message.setCreatorId(userInfo.getId());
 				         message.setOrgId(userInfo.getOrg().getId());
+				         Set<PaperSchema> papers = new HashSet<PaperSchema>();
+				         for(String s:targetPapers){
+				        	 if(s.equals("0")){
+				        		 message.setAllLog(1);
+				        		 break;
+				        	 }
+				        	 PaperSchema p = paperSchemaService.findPaperSchemaById(Long.valueOf(s));
+				        	 papers.add(p);
+				         }
+				         if(papers.size()>0){
+				        	 message.setPaperSchemas(papers);
+				         }
 				         this.messageService.saveMessage(message);
 			             return SUCCESS;
 			    }
@@ -656,15 +685,16 @@ public class MainController extends BaseController {
                     UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 			    	List<PaperSchema> paperList = paperSchemaService.findPaperSchemaByOrg(userInfo.getOrg().getId());
 			        String json = "[";
+			        json += "{\"id\":\""+0+"\",\"name\":\"辖区全体人员\"},";
 			        if(paperList.size()>0){
 			        	for(PaperSchema paper:paperList){
 				        	json += "{";
-				        	json += "\"id\":"+paper.getId()+",";
+				        	json += "\"id\":\""+paper.getId()+"\",";
 				        	json += "\"name\":\""+paper.getPaperName()+"\"";
 				        	json += "},";
 				        }
-			        	json = json.substring(0, json.length()-1);
 			        }
+			        json = json.substring(0, json.length()-1);
 			        json += "]";
 			    	return json;
 			    }

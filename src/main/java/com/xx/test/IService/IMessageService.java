@@ -7,8 +7,11 @@ import com.xx.test.Model.Message;
 import com.xx.test.Model.Org;
 
 public interface IMessageService {
-	  List<Message> findAllMessagesByOrg(Long orgId);
+	
+	List<Message> findAllMessagesByOrgAndAllLog(Long orgId,int allLog);
 
+    List<Message> findAllMessagesByOrg(Long orgId);
+	  
 	void deleteMessage(Long id);
 
 	void alterMessage(Message message);

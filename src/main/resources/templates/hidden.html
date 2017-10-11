@@ -113,7 +113,7 @@
 				margin-left:5px; 
 				padding-left:16px; 
 			} 
-							</style>
+		 </style>
 		
 		 </div>
   </div>
@@ -229,11 +229,9 @@
 						          <label for="nicedit-message" class="label_title">消息内容</label>
  								  <textarea name="content" placeholder="输入正文" id="nicedit-message" required></textarea>
 								  <div class="inner" id="paperTarget" >
- 									<div class="field_select">
-						                    <label for="contact-name" class="label_title">选择考试方案</label>
-						                    <select name="contact-name" id="contact-name" multiple data-placeholder="选择考试方案">
-						                    </select>
-						                </div>
+ 									<div class="field_select" id="field_select_id">
+
+						           </div>
 								</div>
 							</div>
 						</div>
@@ -254,7 +252,7 @@
 		</div>
      </div>
      <script>
-     jQuery('#contact-name').chosen({ width: "100%" });
+    
      jQuery('#addMessageForm .link-reset').click(function(){
          jQuery("#contact-name").trigger("chosen:updated");
      });

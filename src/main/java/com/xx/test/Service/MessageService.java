@@ -23,6 +23,13 @@ public class MessageService implements IMessageService{
     MessageDao messageDao;
 
 	@Override
+	public List<Message> findAllMessagesByOrgAndAllLog(Long orgId,int allLog) {
+		// TODO Auto-generated method stub
+		return messageDao.findByOrgIdAndAllLog(orgId,allLog);
+	}
+	
+	
+	@Override
 	public List<Message> findAllMessagesByOrg(Long orgId) {
 		// TODO Auto-generated method stub
 		return messageDao.findByOrgId(orgId);

@@ -4,13 +4,18 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -38,6 +43,17 @@ public class Message implements Serializable {
 	private Date createTime;
 	
 	private Long creatorId;
+	
+	//0为非所有人发送，1为所有人发送
+	private int allLog;
+	
+	@ManyToMany
+	  @JoinTable(name="t_papermessage" ,
+      joinColumns = { @JoinColumn(name = "msg_Id") },
+	  inverseJoinColumns = { @JoinColumn(name = "paper_Id") })
+	private Set<PaperSchema> paperSchemas=new HashSet<PaperSchema>(0);
+	
+	
 	
 	//管理orgId
 	private Long orgId;
@@ -118,6 +134,27 @@ public class Message implements Serializable {
 	public String getMessageJson(){
 		return JsonUtils.getJsonString(getMessageMap());
 	}
+
+
+	public int getAllLog() {
+		return allLog;
+	}
+
+
+	public void setAllLog(int allLog) {
+		this.allLog = allLog;
+	}
+
+
+	public Set<PaperSchema> getPaperSchemas() {
+		return paperSchemas;
+	}
+
+
+	public void setPaperSchemas(Set<PaperSchema> paperSchemas) {
+		this.paperSchemas = paperSchemas;
+	}
+	
 	
 	
 

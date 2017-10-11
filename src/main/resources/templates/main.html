@@ -14,12 +14,8 @@
 <body style="background: none">
 <div th:insert="header:: header"></div>
 
-<div class="widget-container widget-audio boxed  pull-right" > 
-     <div class="inner">
-        <div class="tagcloud clearfix">
-            <a href="#"><i class="menu-icon menu-icon-6"></i>您有新的消息</a>
-        </div>
-    </div>
+<div class="widget-container widget-audio boxed  pull-right" id="message_div"> 
+    
 </div>
 
 <!-- 如果为管理员则显示管理菜单 -->
@@ -40,32 +36,7 @@
  </div>
  
  
- <!-- 显示公告信息 -->
-  <div th:if="${userInfo.role.manageLog}==0">
-    <div class="container" id="message_container">
-        <div class="content " role="main">
- <div class="panel panel-primary">
-	 <div class="panel-heading">
-	 公告信息
-	 </div>
-	 <div class="panel-body">
-				<table class="table">
-				  <thead>
-				    <tr>
-					      <th><span>公告信息</span></th>
-					      <th><span>发布时间</span></th>
-				    </tr>
-				  </thead>
-				  <tbody id="message_tbody">
-				           
-				  </tbody>
-				</table>
-		   </div>
-	    </div>
-        </div>
- </div>
- </div>
- 
+  
  <!-- 显示考试界面 -->
  <div class="container" id="user_container">
  <div class="panel panel-primary">

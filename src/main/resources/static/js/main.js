@@ -56,15 +56,16 @@ function initMainMenu(){
  function initMessageInfo(){
  
 	   $.getJSON("/index/initMessageInfo", function(data) {
-		        $("#message_tbody").html("");//清空info内容
+		        $("#message_div").html("");//清空info内容
 		        var messageInfo="" ;
-		        $.each(data, function(i, item) {
-		        	messageInfo += "<tr>";
-		        	messageInfo += "<td class='messageContent'><a onclick='checkMessage("+item.id+");'>"+item.name+"</a></td>";
-		        	messageInfo += "<td class='messageTime'> <span>"+item.createTime+"</span></td>";
-		        	messageInfo += "</tr>";
-		        });
-		        $("#message_tbody").html(messageInfo);
+		        if(data=="1"){
+		        	messageInfo += "<div class='inner'>";
+		        	messageInfo += "<div class='tagcloud clearfix'>";
+		        	messageInfo += "<a onclick='showMessageList()'><i class='menu-icon menu-icon-6'></i>查看消息列表</a>";
+		        	messageInfo += "</div>";
+		        	messageInfo += "</div>";
+		        }
+ 		        $("#message_div").html(messageInfo);
 		     });
 	 };
 	 
@@ -92,10 +93,6 @@ function initMainMenu(){
 		   
 	 };
 	 
-	 
-	 function initMessage(){
-		  
-	 }
 	 
 	 
  

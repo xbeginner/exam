@@ -4,12 +4,18 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -41,6 +47,12 @@ public class PaperSchema implements Serializable{
 	  
 	  @OneToMany(mappedBy="paperSchema")
 	  private List<UserPaper> userPapers;
+	  
+	  @ManyToMany(fetch=FetchType.EAGER)
+	  @JoinTable(name="t_papermessage" ,
+	          joinColumns = { @JoinColumn(name = "paper_Id") },
+			  inverseJoinColumns = { @JoinColumn(name = "msg_Id") })
+	    private Set<Message> messages = new HashSet<Message>(0);
 	  
 	  //0为机考，1为生成试卷考试
 	  private int type;
@@ -188,6 +200,15 @@ public class PaperSchema implements Serializable{
 
 	public void setFitOrgLog(int fitOrgLog) {
 		this.fitOrgLog = fitOrgLog;
+	}
+
+	
+	public Set<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Set<Message> messages) {
+		this.messages = messages;
 	}
 
 	private Map<String,String> getPaperSchemaMap(){
