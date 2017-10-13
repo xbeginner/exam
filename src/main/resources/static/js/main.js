@@ -14,7 +14,7 @@ function initMainMenu(){
  };
  
  
- function   initExamInfo(pageNum){
+ function initExamInfo(pageNum){
 	  
 	 $.getJSON("/index/initExamInfo?page="+pageNum, function(data) {
 	        $("#exam_tbody").html("");//清空info内容
@@ -61,7 +61,7 @@ function initMainMenu(){
 		        if(data=="1"){
 		        	messageInfo += "<div class='inner'>";
 		        	messageInfo += "<div class='tagcloud clearfix'>";
-		        	messageInfo += "<a onclick='showMessageList()'><i class='menu-icon menu-icon-6'></i>查看消息列表</a>";
+		        	messageInfo += "<a href='/index/showMessage'><i class='menu-icon menu-icon-6'></i>查看消息列表</a>";
 		        	messageInfo += "</div>";
 		        	messageInfo += "</div>";
 		        }
@@ -94,5 +94,63 @@ function initMainMenu(){
 	 };
 	 
 	 
+	 
+	 function initMessageList(){
+		 
+		   $.getJSON("/index/initMessageList", function(data) {
+			   $("#message_tbody").html("");//清空info内容
+				  var messageBodyInfo = "";
+			        $.each(data, function(i, item) {
+			        	messageBodyInfo += "<tr>";
+			        	messageBodyInfo += "<td><span>"+item.name+"</span></td>";
+			        	messageBodyInfo += "<td><span>"+item.createTime+"</span></td>";
+			        	messageBodyInfo += "<td><a onclick='showMessageInfo("+item.id+");'>查看</a>";
+			        	messageBodyInfo += "</tr>";
+			        });
+			        $("#message_tbody").html(messageBodyInfo);
+			     });
+		 };
+		 
+		 
+	 /**
+	  * 查看信息
+	  * @returns
+	  */
+	 function showMessageInfo(id){
+		   $("#showMessageInfoModal").modal('show');
+		   $.getJSON("/index/getMessageContent?id="+id, function(data) {
+			   $("#show_message_div_id").html("");//清空info内容
+				  var messageBodyInfo = "";
+				  	messageBodyInfo += "<h3>"+data.name+"<i></i></h3><br>";
+				  	messageBodyInfo += data.content;
+			        $("#show_message_div_id").html(messageBodyInfo);
+			        var messageInfo = "";
+			        $.each(data.infos, function(i, item) {
+			        	messageInfo += "<div class='message-field'>";
+			        	messageInfo += "<ol>";
+			        	messageInfo += "<li class='comment'>";    
+			        	messageInfo += "<div class='comment-body boxed blue-line'>";             
+			        	messageInfo += "<div class='comment-text'>";
+			        	messageInfo += "<div class='comment-author'>";
+			        	messageInfo += "<span class='link-author'>"+item.info+"</span></div>";
+			        	messageInfo += "<div class='comment-entry pull-right'>"+item.sendUserName+":"+item.sendTime+"</div>";
+			        	messageInfo += "</div></div></li></ol></div>";
+			        });
+			        $("#show_message_info_div_id").html(messageInfo);
+			        var footerMsg = "<textarea id='message_info_area_id' placeholder='请输入内容'></textarea>";
+			        footerMsg += "<a onclick='sendMessageInfo("+id+")' class='btn btn-follow'><span><em>"+data.infos.length+"</em>发送留言</span></a>";
+			        $("#send_message_info_footer").html(footerMsg);
+			        
+		    });
+	  };
+	  
+	  
+	  function sendMessageInfo(messageId){
+		  $.post("/index/addMessageInfo",
+				{messageId:messageId,info:$("#message_info_area_id").val()},
+				function(result){ 
+					showMessageInfo(messageId);
+				});
+	  };
 	 
  

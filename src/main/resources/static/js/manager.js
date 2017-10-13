@@ -37,21 +37,20 @@ function initRegistedUserInfo(){
  * 初始化机构列表
  * @returns
  */
-function initOrg(parentId){
+function initOrg(){
 	$.getJSON("/index/initOrgList?parentId="+parentId, function(data) {
 		  $("#org_tbody").html("");//清空info内容
 		  var orgBodyInfo = "";
 	        $.each(data, function(i, item) {
 	        	orgBodyInfo += "<tr>";
-	        	orgBodyInfo += "<td><span>"+item.orgName+"</span></td>";
+	        	if(item.ouType=='0'){
+	        		orgBodyInfo += "<td><span><a onclick='showOwnOrg("+item.id+");'>"+item.orgName+"/a></span></td>";
+	        	}else{
+	        		orgBodyInfo += "<td><span>"+item.orgName+"</span></td>";
+	        	}
 	        	orgBodyInfo += "<td><span>"+item.tel+"</span></td>";
 	        	orgBodyInfo += "<td><span>"+item.master+"</span></td>";
-	        	if(item.childCount=="0"){
-	        		orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a></td>";
-	        	}else{
-	        		orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a>&nbsp;&nbsp;&nbsp;<a onclick='showOwnOrg("+item.id+");'>查看辖区机构</a></td>";
-	        	}
-	        	
+	        	orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a></td>";
 	        	orgBodyInfo += "</tr>";
 	        });
 	    
@@ -502,7 +501,8 @@ function initOrg(parentId){
 			        	messageBodyInfo += "<td><span>"+item.name+"</span></td>";
 			        	messageBodyInfo += "<td><span>"+item.createTime+"</span></td>";
 			        	messageBodyInfo += "<td><a onclick='alterMessage("+item.id+");'>修改</a>" +
-			        			"&nbsp;&nbsp;&nbsp;<a onclick='deleteMessage("+item.id+");'>删除</a>";
+			        			"&nbsp;&nbsp;&nbsp;<a onclick='deleteMessage("+item.id+");'>删除</a>"+
+			        			"&nbsp;&nbsp;&nbsp;<a onclick='showMessageInfo("+item.id+");'>查看</a>";
 			        	messageBodyInfo += "</tr>";
 			        });
 			        $("#message_tbody").html(messageBodyInfo);
@@ -634,7 +634,7 @@ function initOrg(parentId){
 		 function toImportUserInfo(){
 			 $("#importUserInfoModal").modal('show');
 			 $("#import_userInfo_form")[0].reset();
-			};
+	     };
 				
  
 			function setUserInfoFileText(){
@@ -680,3 +680,50 @@ function initOrg(parentId){
 			};
 			
  
+			
+			 function openLdapFile(){
+				 $("#importOrgInfoModal").modal('show');
+				 $("#import_org_form")[0].reset();
+				 
+				 $.validator.addMethod("checkXML",function(value,element,params){ 
+				      var checkXML = /\.xml$/; 
+				      return this.optional(element)||(checkXML.test(value)); 
+				    },"必须为xml类型LDAP文件！"); 
+				
+				 $("#import_org_form").validate({
+				 		rules:{
+				 			orgInfofiletext:{
+				 				required:true,
+				 				checkXML:true
+				 			}
+				 		},
+				 		messages:{
+				 			orgInfofiletext:{
+									required:'不能为空'
+								}
+						},
+						 submitHandler:function() {
+						    	var import_orgInfo_option={
+						    			url:'/index/importOrgInfo',
+						    			dataType:'text',
+						    			async: true,
+						    			success:function(data){
+						      				$('#import_org_form')[0].reset();
+							    			alert(data);
+						      				$("#importOrgInfoModal").modal('hide');
+						      				initOrg();
+						    		    }
+						    	};
+						  	    $('#import_org_form').ajaxSubmit(import_orgInfo_option);
+						 }
+				   });
+		     };
+				
+		     
+		     
+		     function setOrgInfoFileText(){
+					$('input[id=orgInfofile]').click();
+					$('input[id=orgInfofile]').change(function() {
+						$('#orgInfofiletext').val($(this).val());
+					});
+				};

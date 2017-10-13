@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -47,12 +49,14 @@ public class Message implements Serializable {
 	//0为非所有人发送，1为所有人发送
 	private int allLog;
 	
-	@ManyToMany
+	  @ManyToMany
 	  @JoinTable(name="t_papermessage" ,
       joinColumns = { @JoinColumn(name = "msg_Id") },
 	  inverseJoinColumns = { @JoinColumn(name = "paper_Id") })
-	private Set<PaperSchema> paperSchemas=new HashSet<PaperSchema>(0);
+	  private Set<PaperSchema> paperSchemas=new HashSet<PaperSchema>(0);
 	
+	@OneToMany(mappedBy="message")
+	private List<MessageInfo> messageInfos;
 	
 	
 	//管理orgId
@@ -153,6 +157,16 @@ public class Message implements Serializable {
 
 	public void setPaperSchemas(Set<PaperSchema> paperSchemas) {
 		this.paperSchemas = paperSchemas;
+	}
+
+
+	public List<MessageInfo> getMessageInfos() {
+		return messageInfos;
+	}
+
+
+	public void setMessageInfos(List<MessageInfo> messageInfos) {
+		this.messageInfos = messageInfos;
 	}
 	
 	

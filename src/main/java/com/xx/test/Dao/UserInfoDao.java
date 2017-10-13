@@ -27,7 +27,7 @@ public interface UserInfoDao extends PagingAndSortingRepository<UserInfo, Long>{
 	@Query("update UserInfo u set u.org = ?1 where u.id = ?2") 
 	public int update(Org org, Long userId);
 	
-	 @Query("SELECT u FROM UserInfo u where u.org.parentOrgId=?1")
+	 @Query("SELECT u FROM UserInfo u where u.org.parentOrg.id=?1")
 	 public List<UserInfo> findByParentOrgId(Long id) ;
 	 
 	 

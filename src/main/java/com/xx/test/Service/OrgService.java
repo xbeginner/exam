@@ -21,11 +21,13 @@ public class OrgService implements IOrgService{
 	}
 	
 	public int alterOrg(Org org){
-		return orgDao.updateOrg(org.getOrgName(), org.getTel(), org.getAddress(), org.getMaster(), org.getMasterTel(), org.getId());
+		//return orgDao.updateOrg(org.getOrgName(), org.getTel(), org.getAddress(), org.getMaster(), org.getMasterTel(), org.getId());
+		return 0;
 	}
 	
 	public List<Org> findOrgListByParentId(Long parentOrgId){
-		 return orgDao.findByParentOrgId(parentOrgId);
+//		 return orgDao.findByParentOrgId(parentOrgId);
+		return null;
 	}
 
 	@Override
@@ -40,13 +42,28 @@ public class OrgService implements IOrgService{
 	
 	
 	public List<Org> findByParentOrgIdNotNull(){
-		  return orgDao.findByParentOrgIdNotNull();
+//		  return orgDao.findByParentOrgIdNotNull();
+		return null;
 	}
 
 	@Override
 	public Org findOrgByName(String depName) {
 		// TODO Auto-generated method stub
-		return orgDao.findByOrgName(depName);
+		return null;
+	}
+	
+	public Org findTopOrg(){
+		return orgDao.findByParentOrgIsNull();
+	}
+
+	@Override
+	public boolean orgIsEmpty() {
+		List<Org> orgList = orgDao.findByAllOrg();
+		if(orgList.isEmpty()){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 }

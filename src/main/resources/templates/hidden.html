@@ -536,10 +536,9 @@
 				</div>
 				<div class="modal-body">
 					      <div id='import_userInfo_div' title='导入人员文件'>
-		                        
 			                   <div class='input-group form-group'>
-				                    <span class='input-group-addon'>人员excel格式文件：</span>
-				                     <input id='userInfofile' type='file' style='display:none' name='uploadFile'> 
+			                        <label for="userInfofiletext" class="label_title">人员excel格式文件</label>
+				                    <input id='userInfofile' type='file' style='display:none' name='uploadFile'> 
 				                    <input type='text' class='form-control' id='userInfofiletext' name='userInfofiletext'>
 				                     <a onclick="setUserInfoFileText()" class="btn btn-green pull-right"><span>选择文件</span></a>
 			                    </div>
@@ -919,7 +918,7 @@
      </div>
  </div>
  
-   <div th:fragment="hiddenAlterPaperQuestionInfo">	
+ <div th:fragment="hiddenAlterPaperQuestionInfo">	
  <div class="modal fade" id="alterPaperQuestionInfoModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true"
 		data-backdrop="static">
@@ -1004,5 +1003,78 @@
 		</form>
      </div>
  </div>
+ 
+ 
+ 
+ 
+ <div th:fragment="hiddenShowMessageInfo">	
+  <div class="modal fade" id="showMessageInfoModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		data-backdrop="static">
+		 <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="panel panel-default">
+						<div class="panel-body" id="show_message_div_id">
+							 
+					    </div>
+				    	<div class="panel-body" id="show_message_info_div_id">
+								 
+					    </div>
+ 			        </div>
+		        </div>
+		     <div class="modal-footer" id="send_message_info_footer">
+                  
+            </div>
+		 </div>
+     </div>
+ </div>
+ </div>
+ 
+ 
+ 
+ <div th:fragment="hiddenImportOrgInfo">	
+ <div class="modal fade" id="importOrgInfoModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		data-backdrop="static">
+		<form id='import_org_form' method='post' enctype='multipart/form-data'>
+		 <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">
+					      <div id='import_org_div' title='导入机构LDAP文件'>
+			                   <div class=' form-group'>
+			                        <label for="orgInfofiletext" class="label_title">机构LDAP格式文件</label>
+				                    <input id='orgInfofile' type='file' style='display:none' name='uploadFile'> 
+				                    <input type='text' class='form-control' id='orgInfofiletext' name='orgInfofiletext'>
+				                     <a onclick="setOrgInfoFileText()" class="btn btn-green pull-right"><span>选择文件</span></a>
+			                    </div>
+				    </div>
+			</div>
+		  	<div class="modal-footer">
+					 <div class="rowSubmit clearfix">
+                    <a href="#" class="link-reset btn btn-icon btn-gray btn-discard" onclick="document.getElementById('import_org_form').reset(); return false">
+                        <span>取消</span>
+                    </a>
+                    <span class="btn btn-icon btn-icon-send btn-submit">
+                        <input type="submit" id="send" value="提交" />
+                    </span>
+                </div>
+				</div>
+		  </div>
+		 </div>
+		 	</form>
+     </div>
+ </div>
+ 
+ 
+ 
  </body>
 </html>

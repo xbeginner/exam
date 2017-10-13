@@ -37,6 +37,7 @@ import com.xx.test.Form.PersonForm;
 import com.xx.test.Form.RegisteUserForm;
 import com.xx.test.Model.Menu;
 import com.xx.test.Model.Message;
+import com.xx.test.Model.MessageInfo;
 import com.xx.test.Model.Org;
 import com.xx.test.Model.PaperSchema;
 import com.xx.test.Model.Question;
@@ -108,8 +109,8 @@ public class MainController extends BaseController {
 	  public String initMessageInfo(HttpServletRequest request , HttpServletResponse response){
 			     UserInfo userInfo = (UserInfo) request.getSession().getAttribute("currentUserInfo");
 			     List<Message> messages = new ArrayList<Message>();
-			     if(userInfo.getOrg().getParentOrgId()!=null){
-			    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrgId(),1);
+			     if(userInfo.getOrg().getParentOrg()!=null){
+			    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrg().getId(),1);
 			     }else{
 			    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getId(),1);
 			     }
@@ -118,8 +119,8 @@ public class MainController extends BaseController {
 			    	 return "1";
 			     }else{
 			    	 List<UserPaper> userPapers = userPaperService.findUserPaperByUserId(userInfo.getId());
-			    	 if(userInfo.getOrg().getParentOrgId()!=null){
-				    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrgId(),0);
+			    	 if(userInfo.getOrg().getParentOrg()!=null){
+				    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getParentOrg().getId(),0);
 				     }else{
 				    	 messages = messageService.findAllMessagesByOrgAndAllLog(userInfo.getOrg().getId(),0);
 				     }
@@ -151,7 +152,8 @@ public class MainController extends BaseController {
 		  UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 		  ModelAndView modelAndView = new ModelAndView("manageOrg");
 		  modelAndView.addObject("userInfo",userInfo);
-		  modelAndView.addObject("org",userInfo.getOrg());
+		  boolean orgIsEmpty = orgService.orgIsEmpty();
+		  modelAndView.addObject("orgIsEmpty",orgIsEmpty);
 		  return modelAndView;
 	  }
 	  
@@ -168,17 +170,17 @@ public class MainController extends BaseController {
 	               return "addOrg";
 	        }
 	        Org org = new Org();
-	         org.setAddress(orgAddForm.getAddress());
-	         org.setMaster(orgAddForm.getMaster());
-	         org.setMasterTel(orgAddForm.getMasterTel());
-	         org.setOrgName(orgAddForm.getOrgName());
-	         org.setTel(orgAddForm.getTel());
+//	         org.setAddress(orgAddForm.getAddress());
+//	         org.setMaster(orgAddForm.getMaster());
+//	         org.setMasterTel(orgAddForm.getMasterTel());
+//	         org.setOrgName(orgAddForm.getOrgName());
+//	         org.setTel(orgAddForm.getTel());
 	        UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 	        if(userInfo.getOrg()==null){
 	        	 userInfo.setOrg(org);
 	 	         this.userInfoService.alterUserInfoOrg(org, userInfo.getId());
 	        }else{
-	        	 org.setParentOrgId(userInfo.getOrg().getId());
+//	        	 org.setParentOrgId(userInfo.getOrg().getId());
 	        }
 	         this.orgService.saveOrg(org);
  
@@ -200,7 +202,7 @@ public class MainController extends BaseController {
 		            Long id = Long.valueOf(request.getParameter("org"));
 			         Org org = this.orgService.findOrgById(id);
 			         registerUser.setOrg(org);
-			         registerUser.setManageOrgId(org.getParentOrgId());
+//			         registerUser.setManageOrgId(org.getParentOrgId());
 		        }
 		         this.registeUserService.saveRegisteUser(registerUser);
 		         return "redirect:/success";
@@ -211,23 +213,13 @@ public class MainController extends BaseController {
 		    @GetMapping("/index/initOrgList")
 		    @ResponseBody
 		    public String initOrgList(HttpServletRequest request , HttpServletResponse response) {
-		    	String json = "[";
+		    	 
 		    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-		    	int parentId = Integer.valueOf(request.getParameter("parentId"));
-		    	if(parentId==0){
-		    		  Org org = this.orgService.findOrgById(userInfo.getOrg().getId());
-		    		  json += org.getOrgJson();
-		    		  List<Org> orgList = this.orgService.findOrgListByParentId(userInfo.getOrg().getId());
-                      if(!orgList.isEmpty()){
-                    	  json = json.replace("}",",\"childCount\":\""+orgList.size()+"\"}");
-                      }else{
-                    	  json = json.replace("}",",\"childCount\":\"0\"}");
-                      }
-		    	}else{
-		    		
-		    	}
-		    	json += "]";
-		        return json;
+		    	Org org = userInfo.getOrg();
+			  	  if(org==null){
+	    			  org = orgService.findTopOrg();
+	    		  }
+		        return org.getOrgJson();
 		    }
 		    
 		    
@@ -269,12 +261,12 @@ public class MainController extends BaseController {
 		    public String addOwnOrg(HttpServletRequest request , HttpServletResponse response) {
 		    	     UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 			         Org org = new Org();
-			         org.setAddress(request.getParameter("address"));
-			         org.setMaster(request.getParameter("master"));
-			         org.setMasterTel(request.getParameter("tel"));
-			         org.setOrgName(request.getParameter("orgName"));
-			         org.setTel(request.getParameter("tel"));
-			         org.setParentOrgId(userInfo.getOrg().getId());
+//			         org.setAddress(request.getParameter("address"));
+//			         org.setMaster(request.getParameter("master"));
+//			         org.setMasterTel(request.getParameter("tel"));
+//			         org.setOrgName(request.getParameter("orgName"));
+//			         org.setTel(request.getParameter("tel"));
+//			         org.setParentOrgId(userInfo.getOrg().getId());
 			         this.orgService.saveOrg(org);
 		             return SUCCESS;
 		    }
@@ -285,11 +277,11 @@ public class MainController extends BaseController {
 		    public String alterOrg(HttpServletRequest request , HttpServletResponse response) {
 		    	     Long id = Long.valueOf(request.getParameter("orgId"));
 			         Org org = orgService.findOrgById(id);
-			         org.setAddress(request.getParameter("address"));
-			         org.setMaster(request.getParameter("master"));
-			         org.setMasterTel(request.getParameter("tel"));
-			         org.setOrgName(request.getParameter("orgName"));
-			         org.setTel(request.getParameter("tel"));
+//			         org.setAddress(request.getParameter("address"));
+//			         org.setMaster(request.getParameter("master"));
+//			         org.setMasterTel(request.getParameter("tel"));
+//			         org.setOrgName(request.getParameter("orgName"));
+//			         org.setTel(request.getParameter("tel"));
 			         this.orgService.alterOrg(org);
 		             return SUCCESS;
 		    }
@@ -662,10 +654,10 @@ public class MainController extends BaseController {
 										     user.setRole(role);
 										     user.setTel(tel);
 										     Org org = orgService.findOrgByName(depName);
-										     if(org!=null&&userInfo.getOrg().getId()==org.getParentOrgId()){
-											     user.setOrg(org);
-											     userInfoService.saveUserInfo(user);
-										     }
+//										     if(org!=null&&userInfo.getOrg().getId()==org.getParentOrgId()){
+//											     user.setOrg(org);
+//											     userInfoService.saveUserInfo(user);
+//										     }
 									 }
 								 }
 							 }
@@ -698,5 +690,88 @@ public class MainController extends BaseController {
 			        json += "]";
 			    	return json;
 			    }
+			    
+			    
+			    
+	  @RequestMapping(value="/index/showMessage",method=RequestMethod.GET)
+	  public ModelAndView showMessage(HttpServletRequest request , HttpServletResponse response){
+		  UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+		  ModelAndView modelAndView = new ModelAndView("showMessage");
+		  modelAndView.addObject("userInfo",userInfo);
+		  return modelAndView;
+	  }
+	  
+	  
+	  
+	  @RequestMapping(value="/index/initMessageList",method=RequestMethod.GET)
+	  @ResponseBody
+	  public String initMessageList(HttpServletRequest request , HttpServletResponse response){
+		  StringBuffer json = new StringBuffer();
+		      json.append("[");
+		      UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+		      Long orgId = userInfo.getOrg().getId();
+		      List<Message> messages = new ArrayList<Message>();
+		      List<Message> allMessageList = this.messageService.findAllMessagesByOrgAndAllLog(orgId,1);
+		      messages.addAll(allMessageList);
+		      List<Message> normalMessageList = this.messageService.findAllMessagesByOrgAndAllLog(orgId,0);
+		      List<UserPaper> userPaperList = userPaperService.findUserPaperByUserId(userInfo.getId());
+		      for(Message m:normalMessageList){
+		    	  for(UserPaper userpaper:userPaperList){
+		    		  if(m.getPaperSchemas().contains(userpaper.getPaperSchema())){
+		    			  messages.add(m);
+		    		  }
+		    	  }
+		      }
+		      if(messages.size()==0){
+		    	  return "[]";
+		      }
+		      for(Message m:messages){
+		    	    json.append(m.getMessageJson());
+		    	    json.append(",");
+		      }
+		      json.deleteCharAt(json.length()-1);
+		      json.append( "]" );
+		      return json.toString();
+	  }
+	  
+	  
+	  @RequestMapping(value="/index/getMessageContent",method=RequestMethod.GET)
+	  @ResponseBody
+	  public String getMessageContent(HttpServletRequest request , HttpServletResponse response){
+		      Long id = Long.valueOf(request.getParameter("id"));
+		      Message message = messageService.findMessageById(id);
+		      StringBuffer json = new StringBuffer();
+		      json.append(message.getMessageJson());
+		      json.deleteCharAt(json.length()-1);
+		      json.append(",\"infos\":[");
+		      List<MessageInfo> messageInfos = message.getMessageInfos();
+		      if(!messageInfos.isEmpty()){
+		    	  for(MessageInfo m:messageInfos){
+		    		  json.append(m.getMessageInfoJson()).append(",");
+		    	  }
+		    	  json.deleteCharAt(json.length()-1);
+		      }
+		      json.append("]}");
+		      return json.toString();
+	  }
+	  
+	    
+	    @PostMapping("/index/addMessageInfo")
+	    @ResponseBody
+	    public String addMessageInfo(HttpServletRequest request , HttpServletResponse response) {
+	    	Long messageId = Long.valueOf(request.getParameter("messageId"));
+	    	Message message = messageService.findMessageById(messageId);
+	    	MessageInfo messageInfo = new MessageInfo();
+	    	messageInfo.setMessage(message);
+	    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+	    	messageInfo.setSendUserId(userInfo.getId());
+	    	messageInfo.setSendUserName(userInfo.getUserName());
+	    	java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+	    	messageInfo.setSendTime(currentDate);
+	    	String info = request.getParameter("info");
+	    	messageInfo.setInfo(info);
+	    	messageInfoService.saveMessageInfo(messageInfo);
+	        return SUCCESS;
+	    }
 
 }

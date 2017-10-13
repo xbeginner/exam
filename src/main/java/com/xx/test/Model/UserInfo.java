@@ -111,7 +111,7 @@ public class UserInfo implements Serializable {
 		   map.put("userName", userName);
 		   map.put("tel", tel);
 		   map.put("idcard", idcard);
-		   map.put("orgName", org.getOrgName());
+		   map.put("orgName", org.getDisplayName());
 		   return  map;
 	}
 	
