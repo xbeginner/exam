@@ -26,8 +26,8 @@ public class OrgService implements IOrgService{
 	}
 	
 	public List<Org> findOrgListByParentId(Long parentOrgId){
-//		 return orgDao.findByParentOrgId(parentOrgId);
-		return null;
+ 		 return orgDao.findByParentOrgId(parentOrgId);
+		 
 	}
 
 	@Override
@@ -64,6 +64,11 @@ public class OrgService implements IOrgService{
 		}else{
 			return false;
 		}
+	}
+	
+   
+	public Org findOrgByOu(String ou){
+		return orgDao.findByOu(ou);
 	}
 
 }

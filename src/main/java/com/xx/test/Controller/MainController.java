@@ -1,5 +1,6 @@
 package com.xx.test.Controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,9 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -215,10 +219,11 @@ public class MainController extends BaseController {
 		    public String initOrgList(HttpServletRequest request , HttpServletResponse response) {
 		    	 
 		    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-		    	Org org = userInfo.getOrg();
+		    	Org org = userInfo.getOrg().getParentOrg();
 			  	  if(org==null){
 	    			  org = orgService.findTopOrg();
 	    		  }
+			  	  System.out.println(org.getOrgJson());
 		        return org.getOrgJson();
 		    }
 		    
@@ -234,7 +239,6 @@ public class MainController extends BaseController {
 		    	}
 		    	json = json.substring(0,json.length()-1);
 		    	json += "]";
-		    	System.out.println(json);
 		        return json;
 		    }
 		    
@@ -245,6 +249,7 @@ public class MainController extends BaseController {
 		    public String showOwnOrgList(HttpServletRequest request , HttpServletResponse response) {
 		    	String json = "[";
 		    	Long parentId = Long.valueOf(request.getParameter("parentId"));
+		    	System.out.println(parentId);
 		    	List<Org> orgList = this.orgService.findOrgListByParentId(parentId);
 		    	for(Org org:orgList){
 		    		 json += org.getOrgJson();
@@ -260,13 +265,18 @@ public class MainController extends BaseController {
 		    @ResponseBody
 		    public String addOwnOrg(HttpServletRequest request , HttpServletResponse response) {
 		    	     UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-			         Org org = new Org();
-//			         org.setAddress(request.getParameter("address"));
-//			         org.setMaster(request.getParameter("master"));
-//			         org.setMasterTel(request.getParameter("tel"));
-//			         org.setOrgName(request.getParameter("orgName"));
-//			         org.setTel(request.getParameter("tel"));
-//			         org.setParentOrgId(userInfo.getOrg().getId());
+                     String parentId = request.getParameter("parentId");
+                     Org parentOrg = userInfo.getOrg().getParentOrg();
+                     if(!parentId.equals("0")){
+                    	 parentOrg = orgService.findOrgById(Long.valueOf(parentId));
+                     }
+                     String displayName = request.getParameter("displayName");
+ 			         Org org = new Org();
+ 			         org.setDisplayName(displayName);
+ 			         org.setName(parentOrg.getName()+"/"+displayName);
+ 			         org.setParentOrg(parentOrg);
+ 			         //查找最大order加上1保存
+ 			         org.setOuType(Integer.valueOf(request.getParameter("ouType")));
 			         this.orgService.saveOrg(org);
 		             return SUCCESS;
 		    }
@@ -773,5 +783,118 @@ public class MainController extends BaseController {
 	    	messageInfoService.saveMessageInfo(messageInfo);
 	        return SUCCESS;
 	    }
+	    
+	    
+	    
+	    @RequestMapping(value="/index/importOrgInfo")
+		@ResponseBody
+		public String orgImport(@RequestParam(value = "uploadFile", required = false) MultipartFile file) {
+			try {
+                 if(importOrgInfosByInputStream(file.getInputStream(),0)){
+                	 return "导入成功,请刷新页面";
+                 }else{
+                	 return "导入失败，请和管理员联系";
+                 }
+			} catch (Exception e) {
+				e.printStackTrace();
+			  	return "导入失败，请和管理员联系";
+			}
+		}
+	    
+	    
+	    private boolean importOrgInfosByInputStream(InputStream inputStream,int type) {
+			try{
+				 SAXReader reader = new SAXReader();
+				 //获取xml文档
+				 Document doc = reader.read(inputStream);
+				// 获取根节点
+			    Element root = doc.getRootElement(); 
+			    switch (type) {
+			    //导入机构
+				case 0:
+					 List<Element> depList = root.elements("dept");
+		                for(Element e:depList){
+		                	if(e.elementText("PBCOuType").equals("0")){
+		                		   Org org = getOrgByXml(e);
+			            	      this.orgService.saveOrg(org);
+		                	}
+		               }
+		                for(Element e:depList){
+		                	if(e.elementText("PBCOuType").equals("1")){
+		                		   Org org = getOrgByXml(e);
+			            	      this.orgService.saveOrg(org);
+		                	}
+		               }
+					break;
+					//导入人员
+			   case 1:
+//				   List<Element> userList = root.elements("person");
+//	                for(Element e:userList){
+//	                	if(e.elementText("status").equals("1")){
+//		                	 UserInfo userInfo = getUserInfoByXml(e);
+//		            	      this.userService.saveOrUpdate(userInfo);
+//	                	}
+//	               }
+					break;
+				default:
+					break;
+				}
+		       return true;
+			}catch(Exception e){
+				  e.printStackTrace();
+				  return false;
+			}
+		}
+
+
+
+		private Org getOrgByXml(Element e) {
+			   Element ouEle = e.element("ou");
+			   String ou = ouEle.getText().trim();
+			   Org org = this.orgService.findOrgByOu(ou);
+			   if(org==null){
+				    org  = new Org();
+			   }
+			   //displayname
+			  Element nameEle = e.element("displayname");
+			  String name = nameEle.getText();
+			  org.setDisplayName(name);
+			  //ou
+			  org.setOu(ou);
+			  //name
+			  Element fullNameEle = e.element("name");
+			  String fullName = fullNameEle.getText();
+			  org.setName(fullName);
+			  //parent
+			  Element parentOrgEle = e.element("PBCSupervisorydepartment");
+			  if(!parentOrgEle.getText().equals("")){
+				      String parentOrgId = parentOrgEle.getText().trim();
+				      Org o = this.orgService.findOrgByOu(parentOrgId);
+				      if(o!=null){
+				    	  org.setParentOrg(o);
+				      }
+			  }
+			  //PBCOuType
+			  Element ouTypeEle = e.element("PBCOuType");
+			  int ouType = Integer.parseInt(ouTypeEle.getText().trim());
+			  org.setOuType(ouType);
+			  //pbcOrgNumber
+			  Element pbcOrgNumberEle = e.element("PBCOrgNumber");
+			  org.setOrgNumber(pbcOrgNumberEle.getText());
+			  Element pbcAreaCodeEle = e.element("pbcAreaCode");
+			  org.setAreaCode(pbcAreaCodeEle.getText());
+			  Element pbcCodeEle = e.element("pbcCode");
+			  org.setPbcCode(pbcCodeEle.getText());
+			  Element pbcOrgCodeEle = e.element("PBCOrgCode");
+			  org.setOrgCode(pbcOrgCodeEle.getText());
+			  //status
+			  Element statusEle = e.element("status");
+			  org.setStatus(Integer.valueOf(statusEle.getText()));
+			  //顺序号
+			  Element orderNumberElement = e.element("pbcorder");
+			  org.setPbcOrder(Integer.valueOf(orderNumberElement.getText()));
+			  //保存
+			 return org;
+		}
 
 }

@@ -59,11 +59,14 @@ public class Org implements Serializable{
 	//金融机构编码
 	private String orgCode;
 	
+	//人力资源编码
+	private String pbcCode;
+	
 	@OneToMany(mappedBy="org")
 	private List<UserInfo> userInfoList;
 	
     
-	@ManyToOne(cascade={CascadeType.REFRESH},fetch=FetchType.LAZY,optional=false)
+	@ManyToOne(cascade={CascadeType.REFRESH},fetch=FetchType.EAGER,optional=true)
 	private Org parentOrg;
 	
 	@OneToMany(mappedBy="parentOrg")
@@ -181,6 +184,16 @@ public class Org implements Serializable{
 
 	public void setChildOrgs(List<Org> childOrgs) {
 		this.childOrgs = childOrgs;
+	}
+	
+	
+
+	public String getPbcCode() {
+		return pbcCode;
+	}
+
+	public void setPbcCode(String pbcCode) {
+		this.pbcCode = pbcCode;
 	}
 
 	private Map<String,String> getOrgMap(){

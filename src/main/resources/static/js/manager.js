@@ -38,23 +38,19 @@ function initRegistedUserInfo(){
  * @returns
  */
 function initOrg(){
-	$.getJSON("/index/initOrgList?parentId="+parentId, function(data) {
+	$.getJSON("/index/initOrgList", function(data) {
+		  
 		  $("#org_tbody").html("");//清空info内容
 		  var orgBodyInfo = "";
-	        $.each(data, function(i, item) {
-	        	orgBodyInfo += "<tr>";
-	        	if(item.ouType=='0'){
-	        		orgBodyInfo += "<td><span><a onclick='showOwnOrg("+item.id+");'>"+item.orgName+"/a></span></td>";
-	        	}else{
-	        		orgBodyInfo += "<td><span>"+item.orgName+"</span></td>";
-	        	}
-	        	orgBodyInfo += "<td><span>"+item.tel+"</span></td>";
-	        	orgBodyInfo += "<td><span>"+item.master+"</span></td>";
-	        	orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a></td>";
-	        	orgBodyInfo += "</tr>";
-	        });
-	    
-	        $("#org_tbody").html(orgBodyInfo );
+		  orgBodyInfo += "<tr>";
+	      	if(data.ouType=='0'){
+	      		orgBodyInfo += "<td><span><a onclick='showOwnOrg("+data.id+");'>"+data.name+"</a></span></td>";
+	      	}else{
+	      		orgBodyInfo += "<td><span>"+data.name+"</span></td>";
+	      	}
+	      	orgBodyInfo += "<td><a onclick='alterOrg("+data.id+");'>修改</a></td>";
+	      	orgBodyInfo += "</tr>";
+	        $("#org_tbody").html(orgBodyInfo);
     });
 }
 
@@ -160,10 +156,12 @@ function initOrg(){
 			  var orgBodyInfo = "";
 		        $.each(data, function(i, item) {
 		        	orgBodyInfo += "<tr>";
-		        	orgBodyInfo += "<td><span>"+item.orgName+"</span></td>";
-		        	orgBodyInfo += "<td><span>"+item.tel+"</span></td>";
-		        	orgBodyInfo += "<td><span>"+item.master+"</span></td>";
-	                orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a>&nbsp;&nbsp;&nbsp;<a onclick='delOrg("+item.id+","+orgId+");'>删除</a></td>";
+		        	orgBodyInfo += "<td><span>"+item.name+"</span></td>";
+	                orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a>&nbsp;&nbsp;&nbsp;<a onclick='delOrg("+item.id+","+orgId+");'>删除</a>";
+	                if(item.ouType=='0'){
+	                	orgBodyInfo += "&nbsp;&nbsp;&nbsp;<a onclick='addOwnOrg("+item.id+");'>添加下级机构</a>"
+	                }
+	                orgBodyInfo += "</td>";
 		        	orgBodyInfo += "</tr>";
 		        });
 		    
@@ -172,42 +170,24 @@ function initOrg(){
 
  }
  
- function addOwnOrg(){
+ function addOwnOrg(parentId){
 	   $("#addOwnOrgModal").modal('show');
 	   $('#orgForm')[0].reset();
 	   
 	   $("#orgForm").validate({
 	    	rules:{
-	    		orgName:{
-	    			required:true
-	    		},
-	    		tel:{
-	    			required:true
-	    		},
-	    		address:{
-	    			required:true
-	    		},
-	    		master:{
+	    		displayName:{
 	    			required:true
 	    		}
 	    	},
 	    	messages:{
-	    		orgName:{
+	    		displayName:{
 	    			required:'请输入名称'
-	    		},
-	    		tel:{
-	    			required:'请输入电话号码'
-	    		},
-	    		address:{
-	    			required:'请输入地址'
-	    		},
-	    		master:{
-	    			required:'请输入联系人'
 	    		}
 	    	},
 	    	submitHandler:function(form){
 	    		 $('#orgForm').ajaxSubmit({
-			  			url:'/index/addOwnOrg',
+			  			url:'/index/addOwnOrg?parentId='+parentId,
 			  			dataType:'text',
 			  			success:function(data){
 			  				$("#addOwnOrgModal").modal('hide');
@@ -634,6 +614,40 @@ function initOrg(){
 		 function toImportUserInfo(){
 			 $("#importUserInfoModal").modal('show');
 			 $("#import_userInfo_form")[0].reset();
+			 
+			 $.validator.addMethod("checkExcel",function(value,element,params){ 
+			      var checkExcel = /\.xl.{1,2}$/; 
+			      return this.optional(element)||(checkExcel.test(value)); 
+			    },"必须为excel类型文件！"); 
+			
+			 $("#import_userInfo_form").validate({
+			 		rules:{
+			 			userInfofiletext:{
+			 				required:true,
+			 				checkExcel:true
+			 			}
+			 		},
+			 		messages:{
+			 			userInfofiletext:{
+								required:'不能为空'
+							}
+					},
+					 submitHandler:function() {
+
+					    	var import_userInfo_option={
+					    			url:'/index/importUserInfo',
+					    			dataType:'text',
+					    			async: true,
+					    			success:function(data){
+					      				$('#import_userInfo_form')[0].reset();
+						    			alert(data);
+					      				$("#importUserInfoModal").modal('hide');
+					      				initRegistedUserInfo();
+					    		    }
+					    	};
+					  	    $('#import_userInfo_form').ajaxSubmit(import_userInfo_option);
+					 }
+			   });
 	     };
 				
  
@@ -642,41 +656,7 @@ function initOrg(){
 				$('input[id=userInfofile]').change(function() {
 					$('#userInfofiletext').val($(this).val());
 				});
-				
-				
-				 $.validator.addMethod("checkExcel",function(value,element,params){ 
-				      var checkExcel = /\.xl.{1,2}$/; 
-				      return this.optional(element)||(checkExcel.test(value)); 
-				    },"必须为excel类型文件！"); 
-				
-				 $("#import_userInfo_form").validate({
-				 		rules:{
-				 			userInfofiletext:{
-				 				required:true,
-				 				checkExcel:true
-				 			}
-				 		},
-				 		messages:{
-				 			userInfofiletext:{
-									required:'不能为空'
-								}
-						},
-						 submitHandler:function() {
  
-						    	var import_userInfo_option={
-						    			url:'/index/importUserInfo',
-						    			dataType:'text',
-						    			async: true,
-						    			success:function(data){
-						      				$('#import_userInfo_form')[0].reset();
-							    			alert(data);
-						      				$("#importUserInfoModal").modal('hide');
-						      				initRegistedUserInfo();
-						    		    }
-						    	};
-						  	    $('#import_userInfo_form').ajaxSubmit(import_userInfo_option);
-						 }
-				   });
 			};
 			
  
@@ -703,14 +683,20 @@ function initOrg(){
 								}
 						},
 						 submitHandler:function() {
+							 
 						    	var import_orgInfo_option={
 						    			url:'/index/importOrgInfo',
 						    			dataType:'text',
 						    			async: true,
+						    			beforeSend: function(){
+						    				$('#import_org_form')[0].reset();
+						    				$("#importOrgInfoModal").modal('hide');
+						    				$("#myAlertModal").modal('show');
+						    				$("#alert_content").html("正在处理,请稍后");
+						    			},
 						    			success:function(data){
-						      				$('#import_org_form')[0].reset();
+						    				$("#myAlertModal").modal('hide');
 							    			alert(data);
-						      				$("#importOrgInfoModal").modal('hide');
 						      				initOrg();
 						    		    }
 						    	};

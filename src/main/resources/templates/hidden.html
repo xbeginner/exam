@@ -16,39 +16,37 @@
 						aria-hidden="true">&times;</button><input type="text"
 										name="orgId"  id="orgId"  hidden>
 				</div>
-				<div class="modal-body ">
+				<div class="modal-body">
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><font color="red">*</font>机构名称：</span> <input type="text"
-										name="orgName"  id="orgName"   class="form-control" required>
-								</div>
-							  <div class="input-group">
-									<span class="input-group-addon"><font color="red">*</font>电话：</span> <input type="text"
-										name="tel"   id="tel" class="form-control" required>
-								</div>
-							    <div class="input-group">
-									<span class="input-group-addon"><font color="red">*</font>地址：</span> <input type="text"
-										name="address"  id="address"  class="form-control" required>
-								</div>
-								 <div class="input-group">
-									<span class="input-group-addon"><font color="red">*</font>联系人：</span> <input type="text"
-										name="master"  id="master"   class="form-control" required>
-								</div>
-								 <div class="input-group">
-									<span class="input-group-addon">联系人电话：</span> <input type="text"
-										name="masterTel"  id="masterTel" class="form-control" >
-								</div>
+								   <label for="displayName" class="label_title">机构名称：</label>
+								   <input type="text"
+										name="displayName"  id="displayName"  class="form-control" required>
+										
+								   <label class="label_title">选择机构性质：</label>
+								   <div class="input_styled">
+									    <div class="rowRadio">
+									        <input type="radio" name="ouType" value="0" id="ouType0" checked>
+									        <label for="ouType0">机构</label>
+									    </div>
+	 									 <div class="rowRadio">
+									         <input type="radio" name="ouType" value="1" id="ouType1" >
+									        <label for="ouType1">部门</label>
+									    </div>
+									</div>
 							</div>
 						</div>
 					</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="submit" class="btn btn-default">提交</a>
-				</div>
-			</div>
+				 <div class="rowSubmit clearfix">
+                    <a href="#" class="link-reset btn btn-icon btn-gray btn-discard" onclick="document.getElementById('orgForm').reset(); return false">
+                        <span>取消输入</span>
+                    </a>
+                    <span class="btn btn-icon btn-icon-send btn-submit pull-right">
+                        <input type="submit" id="send" value="提交" />
+                    </span>
+                </div>
+			  </div>
 		</div>
 		</form>
 	 <style>
@@ -1075,6 +1073,15 @@
  </div>
  
  
+ <div th:fragment="hiddenAlertDiv">	
+ <div class="modal fade" id="myAlertModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="alert_content"> </div>
+        </div>
+    </div>
+</div>
+</div>
  
  </body>
 </html>

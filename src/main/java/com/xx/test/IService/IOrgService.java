@@ -8,7 +8,7 @@ public interface IOrgService {
 	
 	public Org saveOrg(Org org);
 	
-	public List<Org> findOrgListByParentId(Long long1);
+	public List<Org> findOrgListByParentId(Long id);
 	
 	public Org findOrgById(Long id);
 
@@ -23,5 +23,7 @@ public interface IOrgService {
 	public Org findTopOrg();
 	
 	public boolean orgIsEmpty();
+	
+	public Org findOrgByOu(String ou);
 
 }

@@ -25,6 +25,9 @@ public interface OrgDao extends PagingAndSortingRepository<Org, Long>{
 	
 	Org findByParentOrgIsNull();
 	
-    
+	Org findByOu(String ou);
+	
+	 @Query("select o from Org o  where o.parentOrg.id = ?1 order by pbcOrder")
+      List<Org> findByParentOrgId(long id);
 //    Org findByOrgName(String orgName);
 }

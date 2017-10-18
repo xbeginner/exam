@@ -28,7 +28,7 @@
 		      <a class="btn btn-red "  onclick="openLdapFile()"><span>LDAP机构数据初始化</span></a>
 		</div>
  </div>
- <div class="container" id="org_container" th:if="${org}!=null">
+ <div class="container" id="org_container" th:if="${orgIsEmpty}==false">
 		 <div class="panel panel-success">
 			 <div class="panel-heading">
 			 <span>机构管理</span>
@@ -39,9 +39,7 @@
 						  <thead>
 						    <tr>
 							      <th><span>机构名称</span></th>
-							      <th><span>联系电话</span></th>
-							      <th><span>联系人</span></th>
-							       <th><span>操作</span></th>
+							      <th><span>操作</span></th>
 						    </tr>
 						  </thead>
 						  <tbody id="org_tbody">
@@ -51,14 +49,14 @@
 			 
 			  </div>
 	       	<div class="panel-footer import_button_div" >
-	       	        <a onclick="addOwnOrg()" class="btn btn-red "><span>添加辖内机构</span></a>
+	       	        <a onclick="addOwnOrg(0)" class="btn btn-red "><span>添加辖内机构</span></a>
 			  </div>
 		 </div>
  </div>
- 
  <div th:insert="footer :: copy" class="footer"></div>
 </body>
 
  <div th:include="hidden:: hiddenOrg"></div>
 <div th:include="hidden:: hiddenImportOrgInfo"></div>
+ <div th:include="hidden:: hiddenAlertDiv"></div>
 </html>
