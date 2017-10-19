@@ -1,9 +1,13 @@
 package com.xx.test.Dao;
 
+
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -36,6 +40,6 @@ public interface UserInfoDao extends PagingAndSortingRepository<UserInfo, Long>{
 	@Query("update UserInfo u set u.userName = ?1,u.tel=?2,u.idcard=?3 where u.id = ?4")
 	public int updateUserInfo(String userName, String tel,String idcard,Long id);
 		
-		
+    public Page<UserInfo> findPageByParentOrgId(Pageable pageable,Long id);
 		
 }

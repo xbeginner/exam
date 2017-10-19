@@ -35,4 +35,9 @@ public class RegisteUserService implements IRegisteUserService{
 	 public RegisterUser findRegisteUserById(Long id){
 		 return registeUserDao.findOne(id);
 	 }
+	 
+
+	public List<RegisterUser> findRegisteUserByParentOrgId(Long orgId){
+		return registeUserDao.findByManageOrgId(orgId);
+	}
 }

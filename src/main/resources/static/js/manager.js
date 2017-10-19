@@ -16,8 +16,8 @@ function initWaitForRegistUserInfo(){
 };
 
 
-function initRegistedUserInfo(){
-	$.getJSON("/index/showOwnUserInfo", function(data) {
+function initRegistedUserInfo(pageNum){
+	$.getJSON("/index/showOwnUserInfo?pageNum="+pageNum, function(data) {
 		  $("#has_regist_tbody").html("");//清空info内容
 		  var orgBodyInfo = "";
 	        $.each(data, function(i, item) {
@@ -48,7 +48,8 @@ function initOrg(){
 	      	}else{
 	      		orgBodyInfo += "<td><span>"+data.name+"</span></td>";
 	      	}
-	      	orgBodyInfo += "<td><a onclick='alterOrg("+data.id+");'>修改</a></td>";
+	      	orgBodyInfo += "<td><span>"+data.pbcOrder+"</span></td>";
+	      //	orgBodyInfo += "<td><a onclick='alterOrg("+data.id+");'>修改</a></td>";
 	      	orgBodyInfo += "</tr>";
 	        $("#org_tbody").html(orgBodyInfo);
     });
@@ -90,58 +91,40 @@ function initOrg(){
 
  
  
- function alterOrg(orgId){
-	 
+ function alterOrg(orgId,parentId){
        $("#addOwnOrgModal").modal('show');
-	    
+       $('#orgForm').attr('action','/index/alterOrg');
 	    $.getJSON("/index/showOrgInfo?orgId="+orgId, function(data) {
 	    	  $('#orgId').val(data.id);
-	          $('#orgName').val(data.orgName);
-	          $('#tel').val(data.tel);
-	          $('#address').val(data.address);
-	          $('#master').val(data.master);
-	          $('#masterTel').val(data.masterTel);
+	          $('#displayName').val(data.displayName);
+	          $('#pbcOrder').val(data.pbcOrder);
+	          if(data.ouType=='0'){
+	        	  $('input:radio[name=ouType]')[0].checked = true;
+	          }else{
+	        	  $('input:radio[name=ouType]')[1].checked = true;
+	          }
 	     });
 	    
 	    
 	    $("#orgForm").validate({
 	    	rules:{
-	    		orgName:{
-	    			required:true
-	    		},
-	    		tel:{
-	    			required:true
-	    		},
-	    		address:{
-	    			required:true
-	    		},
-	    		master:{
+	    		displayName:{
 	    			required:true
 	    		}
 	    	},
 	    	messages:{
-	    		orgName:{
+	    		displayName:{
 	    			required:'请输入名称'
-	    		},
-	    		tel:{
-	    			required:'请输入电话号码'
-	    		},
-	    		address:{
-	    			required:'请输入地址'
-	    		},
-	    		master:{
-	    			required:'请输入联系人'
 	    		}
 	    	},
 	    	submitHandler:function(form){
 		    	 $('#orgForm').ajaxSubmit({
-			   			url:'/index/alterOrg',
 			   			dataType:'text',
 			   			success:function(data){
 			   				$("#addOwnOrgModal").modal('hide');
 			   				$('#orgForm')[0].reset();
 			                alert(data);
-			                window.location.reload();//刷新当前页面.
+			                showOwnOrg(parentId);
 			   		    }
 			   	     });
 	             }    
@@ -156,8 +139,13 @@ function initOrg(){
 			  var orgBodyInfo = "";
 		        $.each(data, function(i, item) {
 		        	orgBodyInfo += "<tr>";
-		        	orgBodyInfo += "<td><span>"+item.name+"</span></td>";
-	                orgBodyInfo += "<td><a onclick='alterOrg("+item.id+");'>修改</a>&nbsp;&nbsp;&nbsp;<a onclick='delOrg("+item.id+","+orgId+");'>删除</a>";
+		        	if(item.ouType=='0'){
+			      		orgBodyInfo += "<td><span><a onclick='showOwnOrg("+item.id+");'>"+item.name+"</a></span></td>";
+			      	}else{
+			      		orgBodyInfo += "<td><span>"+item.name+"</span></td>";
+			      	}
+		        	orgBodyInfo += "<td><span>"+item.pbcOrder+"</span></td>";
+	                orgBodyInfo += "<td><a onclick='alterOrg("+item.id+","+orgId+");'>修改</a>&nbsp;&nbsp;&nbsp;<a onclick='delOrg("+item.id+","+orgId+");'>删除</a>";
 	                if(item.ouType=='0'){
 	                	orgBodyInfo += "&nbsp;&nbsp;&nbsp;<a onclick='addOwnOrg("+item.id+");'>添加下级机构</a>"
 	                }
@@ -165,7 +153,7 @@ function initOrg(){
 		        	orgBodyInfo += "</tr>";
 		        });
 		    
-		        $("#org_tbody").html(orgBodyInfo );
+		        $("#org_tbody").html(orgBodyInfo);
 	    });
 
  }
@@ -173,26 +161,32 @@ function initOrg(){
  function addOwnOrg(parentId){
 	   $("#addOwnOrgModal").modal('show');
 	   $('#orgForm')[0].reset();
-	   
+	   $('#orgForm').attr('action','/index/addOwnOrg?parentId='+parentId);
+	   $('input:radio[name=ouType]')[0].checked = true;
 	   $("#orgForm").validate({
 	    	rules:{
 	    		displayName:{
+	    			required:true
+	    		},
+	    		ouType:{
 	    			required:true
 	    		}
 	    	},
 	    	messages:{
 	    		displayName:{
 	    			required:'请输入名称'
+	    		},
+	    		ouType:{
+	    			required:'请选择机构类型'
 	    		}
 	    	},
 	    	submitHandler:function(form){
 	    		 $('#orgForm').ajaxSubmit({
-			  			url:'/index/addOwnOrg?parentId='+parentId,
 			  			dataType:'text',
 			  			success:function(data){
 			  				$("#addOwnOrgModal").modal('hide');
 		                    alert(data);
-		                    window.location.reload();//刷新当前页面.
+		                    showOwnOrg(parentId);
 			  		    }
 			  	     });
 	    	   }    
@@ -210,7 +204,15 @@ function initOrg(){
 					showOwnOrg(parentId);
 				}
 			 }
-			  $.ajax(delete_org_options);
+	  
+	  if(window.confirm('确定删除吗？')){
+		  $.ajax(delete_org_options);
+		  return true;
+		}else{
+			return false;
+		} 
+ 
+			 
  };
  
  

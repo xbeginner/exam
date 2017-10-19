@@ -41,6 +41,9 @@ public class UserInfo implements Serializable {
 	@ManyToOne(cascade= CascadeType.ALL,fetch=FetchType.EAGER)
 	private Org org;
 	
+	//保存父机构信息
+	private Long parentOrgId;
+	
 	@ManyToOne
 	private Role role;
 
@@ -104,7 +107,18 @@ public class UserInfo implements Serializable {
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
+	
+	
+	
  
+	public Long getParentOrgId() {
+		return parentOrgId;
+	}
+
+	public void setParentOrgId(Long parentOrgId) {
+		this.parentOrgId = parentOrgId;
+	}
+
 	private Map<String,String> getUserMap(){
 		   Map<String,String> map = new HashMap<String, String>();
 		   map.put("id", String.valueOf(id));

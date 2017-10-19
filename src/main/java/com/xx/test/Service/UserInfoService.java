@@ -3,6 +3,9 @@ package com.xx.test.Service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.xx.test.Dao.UserInfoDao;
@@ -73,5 +76,15 @@ public class UserInfoService implements IUserInfoService{
 	public void deleteUserInfo(Long id){
 		  userInfoDao.delete(id);
 	}
+	
+	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize){
+		Pageable pageable = buildPageRequest(pageNumber, pagzSize);
+		Page<UserInfo> userInfoPage = userInfoDao.findAll(pageable);
+		return userInfoPage.getContent();
+	}
+	
+    private PageRequest buildPageRequest(int pageNumber, int pagzSize) {
+        return new PageRequest(pageNumber - 1, pagzSize, null);
+    }
 
 }

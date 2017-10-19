@@ -15,4 +15,6 @@ public interface IRegisteUserService {
   
   public RegisterUser findRegisteUserById(Long id);
 
+public List<RegisterUser> findRegisteUserByParentOrgId(Long orgId);
+
 }

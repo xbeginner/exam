@@ -275,8 +275,12 @@ public class MainController extends BaseController {
  			         org.setDisplayName(displayName);
  			         org.setName(parentOrg.getName()+"/"+displayName);
  			         org.setParentOrg(parentOrg);
- 			         //查找最大order加上1保存
- 			         org.setOuType(Integer.valueOf(request.getParameter("ouType")));
+ 			        if(request.getParameter("pbcOrder")!=null&&!"".equals(request.getParameter("pbcOrder"))){
+ 			        	 org.setPbcOrder(Integer.valueOf(request.getParameter("pbcOrder")));
+ 			         }
+ 			         if(request.getParameter("ouType")!=null&&!"".equals(request.getParameter("ouType"))){
+ 			        	org.setOuType(Integer.valueOf(request.getParameter("ouType")));
+ 			         }
 			         this.orgService.saveOrg(org);
 		             return SUCCESS;
 		    }
@@ -286,13 +290,19 @@ public class MainController extends BaseController {
 		    @ResponseBody
 		    public String alterOrg(HttpServletRequest request , HttpServletResponse response) {
 		    	     Long id = Long.valueOf(request.getParameter("orgId"));
+		    	     System.out.println("id--------"+id);
 			         Org org = orgService.findOrgById(id);
-//			         org.setAddress(request.getParameter("address"));
-//			         org.setMaster(request.getParameter("master"));
-//			         org.setMasterTel(request.getParameter("tel"));
-//			         org.setOrgName(request.getParameter("orgName"));
-//			         org.setTel(request.getParameter("tel"));
-			         this.orgService.alterOrg(org);
+			         Org parentOrg = org.getParentOrg();
+			         String displayName = request.getParameter("displayName");
+			         org.setDisplayName(displayName);
+ 			         org.setName(parentOrg.getName()+"/"+displayName);
+ 			         if(request.getParameter("pbcOrder")!=null&&!"".equals(request.getParameter("pbcOrder"))){
+			        	 org.setPbcOrder(Integer.valueOf(request.getParameter("pbcOrder")));
+			         }
+			         if(request.getParameter("ouType")!=null&&!"".equals(request.getParameter("ouType"))){
+			        	org.setOuType(Integer.valueOf(request.getParameter("ouType")));
+			         }
+			         this.orgService.saveOrg(org);
 		             return SUCCESS;
 		    }
 		 
@@ -311,6 +321,13 @@ public class MainController extends BaseController {
 		    @ResponseBody
 		    public String deleteOrg(HttpServletRequest request , HttpServletResponse response) {
 		    	Long orgId = Long.valueOf(request.getParameter("id"));
+		    	Org org = orgService.findOrgById(orgId);
+		    	if(!org.getChildOrgs().isEmpty()){
+		    		return "删除失败,请先删除下辖机构";
+		    	}
+		    	if(!org.getUserInfoList().isEmpty()){
+		    		return "请先删除机构人员";
+		    	}
 		    	orgService.deleteOrg(orgId);
 		        return SUCCESS;
 		    }
@@ -321,8 +338,8 @@ public class MainController extends BaseController {
 		    public String showNoRegistUserInfo(HttpServletRequest request , HttpServletResponse response) {
 		    	String json = "[";
 		    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-		    	Long orgId = userInfo.getOrg().getId();
-		    	List<RegisterUser> registUsers = this.registeUserService.findRegisteUserByOrgId(orgId);
+		    	Long orgId = userInfo.getParentOrgId();
+		    	List<RegisterUser> registUsers = this.registeUserService.findRegisteUserByParentOrgId(orgId);
 		    	if(registUsers.size()==0){
 		    		return "[]";
 		    	}
@@ -341,7 +358,8 @@ public class MainController extends BaseController {
 		    public String showOwnUserInfo(HttpServletRequest request , HttpServletResponse response) {
 		    	String json = "[";
 		    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-		    	Long orgId = userInfo.getOrg().getId();
+		    	Long orgId = userInfo.getParentOrgId();
+		    	int pageNum = Integer.valueOf(request.getParameter("pageNum"));
 		    	List<UserInfo> userInfoList = this.userInfoService.findUserInfoByParentOrgId(orgId);
 		    	for(UserInfo user:userInfoList){
 		    		   json += user.getUserJson();
@@ -365,6 +383,7 @@ public class MainController extends BaseController {
 		    	userInfo.setPassword("123456");
 		    	userInfo.setTel(reUser.getTel());
 		    	userInfo.setUserName(reUser.getUserName());
+		    	
 		    	this.userInfoService.saveUserInfo(userInfo);
 		    	registeUserService.deleteRegisteUser(userId);
 		    	return SUCCESS;

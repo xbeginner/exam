@@ -204,6 +204,7 @@ public class Org implements Serializable{
 		   map.put("parentName", parentOrg.getName());
 		   map.put("parentId", String.valueOf(parentOrg.getId()));
 		   map.put("ouType", String.valueOf(ouType));
+		   map.put("pbcOrder", String.valueOf(pbcOrder));
 		   return  map;
 	}
 	

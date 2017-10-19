@@ -34,4 +34,6 @@ public interface IUserInfoService {
 	
 	public void deleteUserInfo(Long id);
 	
+	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize);
+	
 }
