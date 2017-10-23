@@ -124,11 +124,11 @@ public class LoginController extends BaseController{
 		 UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 		  ModelAndView modelAndView = new ModelAndView("main");
 		  modelAndView.addObject("userInfo",userInfo);
-		  if(userInfo.getRole().getManageLog()==0){
+//		  if(userInfo.getRole().getManageLog()==0){
 			    modelAndView.addObject("title","可参加测试");
-		  }else{
-			   modelAndView.addObject("title","测试管理");
-		  }
+//		  }else{
+//			   modelAndView.addObject("title","测试管理");
+//		  }
 		  return modelAndView;
 	  }
 	  

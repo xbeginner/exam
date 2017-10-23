@@ -34,6 +34,8 @@ public interface IUserInfoService {
 	
 	public void deleteUserInfo(Long id);
 	
-	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize);
+	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize,Long orgId);
+
+	UserInfo findByIdCard(String pbcIdCard);
 	
 }

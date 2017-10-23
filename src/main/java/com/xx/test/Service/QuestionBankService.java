@@ -30,7 +30,6 @@ public class QuestionBankService implements IQuestionBankService{
 
 	@Override
 	public List<QuestionBank> findQuestionBankByOrg(Long orgId) {
-		// TODO Auto-generated method stub
 		return questionBankDao.findByOrgId(orgId);
 	}
 

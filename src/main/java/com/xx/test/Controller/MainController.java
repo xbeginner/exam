@@ -56,6 +56,7 @@ import redis.clients.jedis.Jedis;
 
 @Controller
 public class MainController extends BaseController {
+	
 
 	  @RequestMapping(value="/index/initMainMenu",method=RequestMethod.GET)
 	  @ResponseBody
@@ -89,21 +90,26 @@ public class MainController extends BaseController {
 	  @RequestMapping(value="/index/initExamInfo",method=RequestMethod.GET)
 	  @ResponseBody
 	  public String initExamInfo(HttpServletRequest request , HttpServletResponse response){
-               UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-               List<UserPaper> userPapers = userPaperService.findUserPaperByUserId(userInfo.getId());
-		       String json = "{\"info\":[";
+                UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
+		    	int pageNum = Integer.valueOf(request.getParameter("pageNum"));
+		    	 List<UserPaper> userPapers = userPaperService.findPageUserPaperByUserId(pageNum,PAGESIZE,userInfo.getId());
+		    	List<UserPaper> allPaperList = userPaperService.findUserPaperByUserId(userInfo.getId());
+		    	int page = allPaperList.size()/PAGESIZE;
+		    	if(allPaperList.size()%PAGESIZE>0){
+		    		page += 1;
+		    	}
+ 
+		       String json = "{\"page\":"+page+",\"info\":[";
 		       if(userPapers.size()>0){
 		    	     for(UserPaper userPaper:userPapers){
-//		    	    	 if(userPaper.getDoLog()==0){
+		    	    	 if(userPaper.getDoLog()==0){
 		    	    	     json += userPaper.getUserMainPaperSchemaJson()+",";
-//		    	    	 }else{
-//		    	    		 
-//		    	    	 }
+		    	    	 }
 		    	     }
 		    	     json = json.substring(0, json.length()-1);
 		       }
 		       json += "]}";
-		      return json;
+		       return json;
 	  }
 	
 	  
@@ -204,9 +210,7 @@ public class MainController extends BaseController {
 		        registerUser.setUserName(registeUserForm.getUserName());
 		        if(request.getParameter("org")!=null){
 		            Long id = Long.valueOf(request.getParameter("org"));
-			         Org org = this.orgService.findOrgById(id);
-			         registerUser.setOrg(org);
-//			         registerUser.setManageOrgId(org.getParentOrgId());
+ 		            registerUser.setManageOrgId(id);
 		        }
 		         this.registeUserService.saveRegisteUser(registerUser);
 		         return "redirect:/success";
@@ -356,17 +360,23 @@ public class MainController extends BaseController {
 		    @GetMapping("/index/showOwnUserInfo")
 		    @ResponseBody
 		    public String showOwnUserInfo(HttpServletRequest request , HttpServletResponse response) {
-		    	String json = "[";
+		    	
 		    	UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
 		    	Long orgId = userInfo.getParentOrgId();
 		    	int pageNum = Integer.valueOf(request.getParameter("pageNum"));
-		    	List<UserInfo> userInfoList = this.userInfoService.findUserInfoByParentOrgId(orgId);
+		    	List<UserInfo> userInfoList = this.userInfoService.getUserInfoByPage(pageNum, PAGESIZE, orgId);
+		    	List<UserInfo> allUserList = userInfoService.findUserInfoByParentOrgId(orgId);
+		    	int page = allUserList.size()/PAGESIZE;
+		    	if(allUserList.size()%PAGESIZE>0){
+		    		page += 1;
+		    	}
+		    	String json = "{\"page\":"+page+",\"users\":[";
 		    	for(UserInfo user:userInfoList){
 		    		   json += user.getUserJson();
 		    		   json += ",";
 		    	}
 		    	json = json.substring(0, json.length()-1);
-		    	json += "]";
+		    	json += "]}";
 		        return json;
 		    }
 		    
@@ -379,7 +389,8 @@ public class MainController extends BaseController {
 		    	RegisterUser reUser = registeUserService.findRegisteUserById(userId);
 		    	UserInfo userInfo = new UserInfo();
 		    	userInfo.setIdcard(reUser.getIdcard());
-		    	userInfo.setOrg(reUser.getOrg());
+		    	Org org = orgService.findOrgById(reUser.getManageOrgId());
+		    	userInfo.setOrg(org);
 		    	userInfo.setPassword("123456");
 		    	userInfo.setTel(reUser.getTel());
 		    	userInfo.setUserName(reUser.getUserName());
@@ -654,11 +665,20 @@ public class MainController extends BaseController {
 				@ResponseBody
 				public String importQuestion(HttpServletRequest request , HttpServletResponse response,@RequestParam(value = "uploadFile", required = false) MultipartFile userInfoFile) throws Exception {  
 				     UserInfo userInfo = (UserInfo)request.getSession().getAttribute("currentUserInfo");
-				     String msg = dealWithTheUserInfoFile(userInfoFile,userInfo);
+				     String msg = "";
+				     if(userInfoFile.getName().endsWith("xls")){
+				        msg = dealWithTheUserInfoFile(userInfoFile,userInfo);
+				     }else if(userInfoFile.getName().endsWith("xml")){
+				    	 if(importOrgInfosByInputStream(userInfoFile.getInputStream(),1)){
+		                	 msg = "导入成功,请刷新页面";
+		                 }else{
+		                	 msg = "导入失败，请和管理员联系";
+		                 }
+				     }
 				     return msg;
 			  } 
 			  
-			  
+			    
 			  
 			  private String dealWithTheUserInfoFile(MultipartFile file,UserInfo userInfo) {
 					try {
@@ -683,10 +703,6 @@ public class MainController extends BaseController {
 										     user.setRole(role);
 										     user.setTel(tel);
 										     Org org = orgService.findOrgByName(depName);
-//										     if(org!=null&&userInfo.getOrg().getId()==org.getParentOrgId()){
-//											     user.setOrg(org);
-//											     userInfoService.saveUserInfo(user);
-//										     }
 									 }
 								 }
 							 }
@@ -835,7 +851,7 @@ public class MainController extends BaseController {
 		                for(Element e:depList){
 		                	if(e.elementText("PBCOuType").equals("0")){
 		                		   Org org = getOrgByXml(e);
-			            	      this.orgService.saveOrg(org);
+			            	       this.orgService.saveOrg(org);
 		                	}
 		               }
 		                for(Element e:depList){
@@ -847,13 +863,11 @@ public class MainController extends BaseController {
 					break;
 					//导入人员
 			   case 1:
-//				   List<Element> userList = root.elements("person");
-//	                for(Element e:userList){
-//	                	if(e.elementText("status").equals("1")){
-//		                	 UserInfo userInfo = getUserInfoByXml(e);
-//		            	      this.userService.saveOrUpdate(userInfo);
-//	                	}
-//	               }
+				    List<Element> userList = root.elements("person");
+	                for(Element e:userList){
+	                	  UserInfo userInfo = getUserInfoByXml(e);
+	            	      this.userInfoService.add(userInfo);
+	               }
 					break;
 				default:
 					break;
@@ -914,6 +928,63 @@ public class MainController extends BaseController {
 			  org.setPbcOrder(Integer.valueOf(orderNumberElement.getText()));
 			  //保存
 			 return org;
+		}
+		
+		
+		
+		private UserInfo getUserInfoByXml(Element e) {
+			   Element idcardElement = e.element("pbcIdCard");
+			   String pbcIdCard = idcardElement.getText().trim();
+			   UserInfo userInfo = userInfoService.findByIdCard(pbcIdCard);
+			   if(userInfo==null){
+				   userInfo = new UserInfo();
+			   }
+			   //uid
+			   Element uidEle = e.element("uid");
+			   String uid = uidEle.getText().trim();
+			   userInfo.setUid(uid);
+			   //username
+			   Element nameEle = e.element("username");
+			   String username = nameEle.getText().trim();
+			   userInfo.setUserName(username);
+			   //dep
+			   String departInfos = e.element("departmentnumber").getText().trim();
+			   String[] infos = departInfos.split(",");
+			   for(String s : infos){
+				   String[] depInfo = s.split("=");
+				   if(depInfo[0].equals("ou")){
+					   String depOu = depInfo[1];
+					   Org org = orgService.findOrgByOu(depOu);
+					   userInfo.setOu(depOu);
+					   userInfo.setOrg(org);
+					   break;
+				   }
+			   }
+			   //status
+			   Element statusEle = e.element("status");
+			   String status = statusEle.getText().trim();
+			   userInfo.setStatus(Integer.valueOf(status));
+			   //pbcGender
+			   Element genderEle = e.element("pbcgender");
+			   String gender = genderEle.getText().trim();
+			   userInfo.setPbcGender(Integer.valueOf(gender));
+			   //idcard
+			   Element idcardEle = e.element("pbcIdCard");
+			   String idcard = idcardEle.getText().trim();
+			   userInfo.setIdcard(idcard);
+			   //position
+			   Element positionEle = e.element("pbcposition");
+			   String position = positionEle.getText().trim();
+			   userInfo.setPbcPosition(position);
+			   //level
+			   Element levelEle = e.element("pbcpoliticalLevel");
+			   String level = levelEle.getText().trim();
+			   userInfo.setPbcPoliticalLevel(level);
+			   //order
+			   Element orderEle = e.element("pbcorder");
+			   String order = orderEle.getText().trim();
+			   userInfo.setPbcOrder(Integer.valueOf(order));
+			   return userInfo;
 		}
 
 }

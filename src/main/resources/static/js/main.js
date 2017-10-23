@@ -16,7 +16,7 @@ function initMainMenu(){
  
  function initExamInfo(pageNum){
 	  
-	 $.getJSON("/index/initExamInfo?page="+pageNum, function(data) {
+	 $.getJSON("/index/initExamInfo?pageNum="+pageNum, function(data) {
 	        $("#exam_tbody").html("");//清空info内容
 	        $("#exam_page").html("");
 	        var examBodyInfo = "";

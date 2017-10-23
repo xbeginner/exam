@@ -34,12 +34,16 @@ public class RegisterUser implements Serializable {
 	
 	private String idcard;
 	
-	@ManyToOne
-	private Org org;
+ 
 	
 	private String tel;
 	
-	//管理机构id
+	private int pbcGender;
+	
+	private String pbcPosition;
+	
+	private String pbcPoliticalLevel;
+	
 	private Long manageOrgId;
 	
 
@@ -68,13 +72,7 @@ public class RegisterUser implements Serializable {
 		this.idcard = idcard;
 	}
 
-	public Org getOrg() {
-		return org;
-	}
-
-	public void setOrg(Org org) {
-		this.org = org;
-	}
+ 
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -88,8 +86,32 @@ public class RegisterUser implements Serializable {
 		this.tel = tel;
 	}
 	
-	
  
+	public int getPbcGender() {
+		return pbcGender;
+	}
+
+	public void setPbcGender(int pbcGender) {
+		this.pbcGender = pbcGender;
+	}
+
+	public String getPbcPosition() {
+		return pbcPosition;
+	}
+
+	public void setPbcPosition(String pbcPosition) {
+		this.pbcPosition = pbcPosition;
+	}
+
+	public String getPbcPoliticalLevel() {
+		return pbcPoliticalLevel;
+	}
+
+	public void setPbcPoliticalLevel(String pbcPoliticalLevel) {
+		this.pbcPoliticalLevel = pbcPoliticalLevel;
+	}
+	
+	
 
 	public Long getManageOrgId() {
 		return manageOrgId;
@@ -105,8 +127,7 @@ public class RegisterUser implements Serializable {
 		   map.put("userName", userName);
 		   map.put("tel", tel);
 		   map.put("idcard", idcard);
-		   map.put("orgName", org.getDisplayName());
-		   return  map;
+		   return map;
 	}
 	
 	

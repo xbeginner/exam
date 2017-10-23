@@ -77,14 +77,20 @@ public class UserInfoService implements IUserInfoService{
 		  userInfoDao.delete(id);
 	}
 	
-	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize){
+	public List<UserInfo> getUserInfoByPage(int pageNumber, int pagzSize,Long orgId){
 		Pageable pageable = buildPageRequest(pageNumber, pagzSize);
-		Page<UserInfo> userInfoPage = userInfoDao.findAll(pageable);
+		Page<UserInfo> userInfoPage = userInfoDao.findByParentOrgId(orgId,pageable);
 		return userInfoPage.getContent();
 	}
 	
     private PageRequest buildPageRequest(int pageNumber, int pagzSize) {
         return new PageRequest(pageNumber - 1, pagzSize, null);
     }
+
+	@Override
+	public UserInfo findByIdCard(String pbcIdCard) {
+		// TODO Auto-generated method stub
+		return userInfoDao.findByIdcard(pbcIdCard);
+	}
 
 }

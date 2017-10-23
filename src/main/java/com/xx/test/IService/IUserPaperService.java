@@ -5,6 +5,7 @@ import java.util.List;
 import com.xx.test.Model.Menu;
 import com.xx.test.Model.Message;
 import com.xx.test.Model.Org;
+import com.xx.test.Model.UserInfo;
 import com.xx.test.Model.UserPaper;
 
 public interface IUserPaperService {
@@ -16,5 +17,7 @@ public interface IUserPaperService {
 	public UserPaper findUserPaperById(Long id);
 
 	public void deleteUserPaper(Long id);
+	
+	public List<UserPaper> findPageUserPaperByUserId(int pageNumber, int pagzSize,Long orgId);
 	
 }

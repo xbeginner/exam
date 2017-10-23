@@ -66,10 +66,10 @@ public class PaperSchema implements Serializable{
 	  private Long creatorId;
 	  
 		//0个人,1企业,2通用
-		private int fitUserLog;
+		//private int fitUserLog;
 		
 		//企业类别，0人行机构，1金融机构，2征信机构，3评级机构
-		private int fitOrgLog;
+		//private int fitOrgLog;
 		
 		private Integer panduanNum;
 		
@@ -186,21 +186,7 @@ public class PaperSchema implements Serializable{
 
 	
 	
-	public int getFitUserLog() {
-		return fitUserLog;
-	}
-
-	public void setFitUserLog(int fitUserLog) {
-		this.fitUserLog = fitUserLog;
-	}
-
-	public int getFitOrgLog() {
-		return fitOrgLog;
-	}
-
-	public void setFitOrgLog(int fitOrgLog) {
-		this.fitOrgLog = fitOrgLog;
-	}
+	 
 
 	
 	public Set<Message> getMessages() {
@@ -219,8 +205,6 @@ public class PaperSchema implements Serializable{
 		   map.put("id", String.valueOf(id));
 		   map.put("paperName", paperName);
 		   SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		   map.put("fitUserLog", fitUserLogs[fitUserLog]);
-		   map.put("fitOrgLog", fitOrgLogs[fitOrgLog]);
 		   map.put("type", types[type]);
 		   map.put("typeLog", String.valueOf(type));
 		   map.put("doTime", String.valueOf(doTime));
@@ -241,8 +225,6 @@ public class PaperSchema implements Serializable{
 		   Map<String,String> map = new HashMap<String, String>();
 		   map.put("id", String.valueOf(id));
 		   map.put("paperName", paperName);
-		   map.put("fitUserLog", String.valueOf(fitUserLog));
-		   map.put("fitOrgLog",String.valueOf(fitOrgLog));
 		   map.put("type",String.valueOf(type));
 		   map.put("doTime", String.valueOf(doTime));
 		   map.put("log", String.valueOf(log));

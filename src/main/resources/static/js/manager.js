@@ -20,16 +20,31 @@ function initRegistedUserInfo(pageNum){
 	$.getJSON("/index/showOwnUserInfo?pageNum="+pageNum, function(data) {
 		  $("#has_regist_tbody").html("");//清空info内容
 		  var orgBodyInfo = "";
-	        $.each(data, function(i, item) {
+	        $.each(data.users, function(i, item) {
 	        	orgBodyInfo += "<tr>";
 	        	orgBodyInfo += "<td><span>"+item.userName+"</span></td>";
 	        	orgBodyInfo += "<td><span>"+item.orgName+"</span></td>";
-	        	orgBodyInfo += "<td><span>"+item.tel+"</span></td>";
+	        	orgBodyInfo += "<td><span>"+item.level+"</span></td>";
+	        	orgBodyInfo += "<td><span>"+item.idcard+"</span></td>";
 	        	orgBodyInfo += "<td><a class='btn_success' onclick='alterUserInfo("+item.id+")'>修改</a>&nbsp;&nbsp;&nbsp;<a class='btn_danger' onclick='deleteUserInfo("+item.id+");'>删除</a></td>";
 	        	orgBodyInfo += "</tr>";
 	        });
-	    
 	        $("#has_regist_tbody").html(orgBodyInfo );
+	        var userPageInfo = "";
+	     	   if(pageNum==0||pageNum==1){
+	     		  userPageInfo += "<a class='page_prev' href='javascript:initRegistedUserInfo(1)'><span>‹</span></a>";   
+	    	   }else{
+	    		   userPageInfo += "<a class='page_prev' href='javascript:initRegistedUserInfo("+(pageNum-1)+")'><span>‹</span></a>";   
+	    	   }
+	           for(var index=1;index<data.page+1;index++){
+	        	   userPageInfo += "<a href='javascript:initRegistedUserInfo("+index+")' class='page-numbers'>"+index+"</a>";
+	           }
+	           if(pageNum>=data.page){
+	        	   userPageInfo += "<a class='page_next' href='javascript:initRegistedUserInfo("+data.page+")'><span>›</span></a>";
+	           }else{
+	        	   userPageInfo += "<a class='page_next' href='javascript:initRegistedUserInfo("+(pageNum+1)+")'><span>›</span></a>";
+	           }
+	        	   $("#registed_userinfo_page").html(userPageInfo );
 });
 }
 
@@ -617,16 +632,17 @@ function initOrg(){
 			 $("#importUserInfoModal").modal('show');
 			 $("#import_userInfo_form")[0].reset();
 			 
-			 $.validator.addMethod("checkExcel",function(value,element,params){ 
+			 $.validator.addMethod("checkFile",function(value,element,params){ 
 			      var checkExcel = /\.xl.{1,2}$/; 
-			      return this.optional(element)||(checkExcel.test(value)); 
-			    },"必须为excel类型文件！"); 
+			      var checkXml = /\.xml$/; 
+			      return this.optional(element)||(checkExcel.test(value))||(checkXml.test(value)); 
+			    },"必须为xls或者xml格式文件！"); 
 			
 			 $("#import_userInfo_form").validate({
 			 		rules:{
 			 			userInfofiletext:{
 			 				required:true,
-			 				checkExcel:true
+			 				checkFile:true
 			 			}
 			 		},
 			 		messages:{

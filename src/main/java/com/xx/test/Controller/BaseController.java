@@ -19,6 +19,8 @@ public abstract class BaseController {
 	
 	protected static final String SUCCESS="操作成功";
 	
+	protected static final int PAGESIZE=10;
+	
 	  @Autowired
 	  protected IUserInfoService userInfoService;
 	  
