@@ -71,4 +71,10 @@ public class OrgService implements IOrgService{
 		return orgDao.findByOu(ou);
 	}
 
+	@Override
+	public List<Org> findByFirstLevelOrgs() {
+		Org org = orgDao.findByParentOrgIsNull();
+		return org.getChildOrgs();
+	}
+
 }

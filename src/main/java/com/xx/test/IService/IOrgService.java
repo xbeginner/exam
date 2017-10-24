@@ -26,4 +26,6 @@ public interface IOrgService {
 	
 	public Org findOrgByOu(String ou);
 
+	public List<Org> findByFirstLevelOrgs();
+
 }

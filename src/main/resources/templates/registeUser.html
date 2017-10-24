@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="../static/manager.css"  th:href="@{/css/manager.css}"  />
 	<script src="../static/js/manager.js" th:src="@{/js/manager.js}"></script>
 	<script type="text/javascript">
-	     initRegisterOrgs();
+	     initRegisterOrgs(0);
 	</script>
 </head>
 <body>
@@ -38,25 +38,53 @@
 			  </div>
 			  
 			 <div class="form-group">
-			    <label>选择机构</label>
-			   <div class="field_select">
-				    <select class="select_styled" id="org_select" name="org">
-				        
-				    </select>
-				</div>
+                    <label>性别</label>
+                    <select name="gender" id="gender" class="form-control">
+                        <option value='0'>男</option>
+                        <option value='1'>女</option>
+                    </select>
 			  </div>
 			  
+			  <div class="form-group">
+                    <label>是否党员</label>
+                    <select name="partyLog" id="partyLog" class="form-control">
+                        <option value='0'>是</option>
+                        <option value='1'>否</option>
+                    </select>
+			  </div>
 			  
-			            
-             
-                   
+			   <div class="form-group">
+                    <label>选择职级</label>
+                    <select name="pbcPoliticalLevel" id="pbcPoliticalLevel" class="form-control">
+                        <option value='0121'>省部级</option>
+                        <option value='0122'>副省部级</option>
+                        <option value='0131'>司局级</option>
+                        <option value='0132'>副司局级</option>
+                        <option value='0141'>县处级</option>
+                        <option value='0142'>副县处级</option>
+                        <option value='0151'>正科级</option>
+                        <option value='0152'>副科级</option>
+                        <option value='0161'>科员级</option>
+                        <option value='0171'>办事员</option>
+                        <option value='0199'>未定职</option>
+                        <option value='0121'>省部级</option>
+                        <option value='0121'>省部级</option>
+                    </select>
+			  </div>
+			  
+			  <div class="form-group" id="first_org_level" style="display:none">
+			  
+			  </div>
+              <div class="form-group" id="second_org_level" style="display:none">
+			  
+			  </div>
 
-		            </div>
-		            <div class="modal-footer">
-		                <a  class="btn btn-default modal_button" data-dismiss="modal" onclick="window.close();">关闭</a>
-		                <button  class="btn btn-default modal_button" type="submit">提交</button>
-		            </div>
-                </form>
+           </div>
+           <div class="modal-footer">
+               <a  class="btn btn-default modal_button" data-dismiss="modal" onclick="window.close();">关闭</a>
+               <button  class="btn btn-default modal_button" type="submit">提交</button>
+           </div>
+             </form>
         </div> 
 </body>
 </html>

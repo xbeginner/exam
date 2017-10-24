@@ -46,6 +46,10 @@ public class RegisterUser implements Serializable {
 	
 	private Long manageOrgId;
 	
+	private String partyMember;
+	
+	//0为党员，1为非党员
+	private int partyLog;
 
 	public Long getId() {
 		return id;
@@ -119,6 +123,24 @@ public class RegisterUser implements Serializable {
 
 	public void setManageOrgId(Long manageOrgId) {
 		this.manageOrgId = manageOrgId;
+	}
+	
+	
+
+	public String getPartyMember() {
+		return partyMember;
+	}
+
+	public void setPartyMember(String partyMember) {
+		this.partyMember = partyMember;
+	}
+
+	public int getPartyLog() {
+		return partyLog;
+	}
+
+	public void setPartyLog(int partyLog) {
+		this.partyLog = partyLog;
 	}
 
 	private Map<String,String> getRegisteUserMap(){

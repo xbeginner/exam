@@ -92,7 +92,7 @@
      left=scrollLeft+(winWidth-clientWidth)/2;
      top=scrollTop+(winHeight-clientHeight)/2;   
      
-	 window.open("/manage/toRegisteUser","","top="+top+"px,left="+left+"px,width=700,height=500");
+	 window.open("/manage/toRegisteUser","","top="+top+"px,left="+left+"px,width=700,height=900");
  };
 
  

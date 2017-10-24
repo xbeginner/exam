@@ -236,7 +236,7 @@ public class MainController extends BaseController {
 		    @ResponseBody
 		    public String getAllRegisteOrgs(HttpServletRequest request , HttpServletResponse response) {
 		    	String json = "[";
-		    	List<Org> orgs = this.orgService.findByParentOrgIdNotNull();
+		    	List<Org> orgs = this.orgService.findByFirstLevelOrgs();
 		    	for(Org o:orgs){
 		    		json += o.getOrgJson();
 		    		json += ",";
