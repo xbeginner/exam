@@ -15,8 +15,10 @@ public class RegisteUserForm {
 	@NotEmpty
 	private String idcard;
 	
+	 
  
 
+	 
 	 
 	public String getTel() {
 		return tel;
@@ -42,6 +44,7 @@ public class RegisteUserForm {
 		this.idcard = idcard;
 	}
 
+ 
 	 
 	
 	 

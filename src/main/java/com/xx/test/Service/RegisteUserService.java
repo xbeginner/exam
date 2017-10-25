@@ -37,7 +37,14 @@ public class RegisteUserService implements IRegisteUserService{
 	 }
 	 
 
-	public List<RegisterUser> findRegisteUserByParentOrgId(Long orgId){
+	public List<RegisterUser> findRegisteUserByManageOrgId(Long orgId){
 		return registeUserDao.findByManageOrgId(orgId);
+	}
+
+
+	@Override
+	public List<RegisterUser> findRegisteUserByParentOrgId(Long orgId) {
+		// TODO Auto-generated method stub
+		return registeUserDao.findByParentOrgId(orgId);
 	}
 }

@@ -34,7 +34,7 @@ public class RegisterUser implements Serializable {
 	
 	private String idcard;
 	
- 
+    private Long parentOrgId;
 	
 	private String tel;
 	
@@ -141,6 +141,16 @@ public class RegisterUser implements Serializable {
 
 	public void setPartyLog(int partyLog) {
 		this.partyLog = partyLog;
+	}
+	
+	
+
+	public Long getParentOrgId() {
+		return parentOrgId;
+	}
+
+	public void setParentOrgId(Long parentOrgId) {
+		this.parentOrgId = parentOrgId;
 	}
 
 	private Map<String,String> getRegisteUserMap(){

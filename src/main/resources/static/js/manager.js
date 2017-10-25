@@ -236,12 +236,13 @@ function initOrg(){
 		  $("#first_org_level").show();
 		  $("#first_org_level").html("");//清空info内容
 		  var orgBodyInfo = "<label>机构选择</label>";
-		  orgBodyInfo += "<select name='firsrLevelOrg' id='firsrLevelOrg' class='form-control' onchange='getChildOrgByFirstLevelOrg(2)'>";
+		  orgBodyInfo += "<select name='firstOrgId'  class='form-control' onchange='getChildOrgByFirstLevelOrg(2)'>";
 	        $.each(data, function(i, item) {
 	        	orgBodyInfo += "<option value="+item.id+">"+item.displayName+"</option>";
 	        });
 	        orgBodyInfo += "</select>";
 	        $("#first_org_level").html(orgBodyInfo );
+	        getChildOrgByFirstLevelOrg(2);
    });
  };
  
@@ -253,7 +254,7 @@ function initOrg(){
 				dataType:'text',	
 				success:function(data){
 					initWaitForRegistUserInfo();
-					initRegistedUserInfo();
+					initRegistedUserInfo(1);
 					alert(data);
 				}
 			 }
@@ -267,7 +268,7 @@ function initOrg(){
 				dataType:'text',	
 				success:function(data){
 					initWaitForRegistUserInfo();
-					initRegistedUserInfo();
+					initRegistedUserInfo(1);
 					alert(data);
 				}
 			 }
@@ -737,14 +738,14 @@ function initOrg(){
 				
 				
 		function getChildOrgByFirstLevelOrg(index){
-			var parentId = $("#first_org_level").find("option:selected").val();
 			switch (index) {
 			case 2:
+				var parentId = $("#first_org_level").find("option:selected").val();
 				$.getJSON("/manage/getAllRegisteOrgsByParentId?parentId="+parentId, function(data) {
 					  $("#second_org_level").show();
 					  $("#second_org_level").html("");//清空info内容
 					  var orgBodyInfo = "";
-					  orgBodyInfo += "<select  class='form-control' onchange='getChildOrgByFirstLevelOrg(3)'>";
+					  orgBodyInfo += "<select name='secondOrgId' class='form-control' onchange='getChildOrgByFirstLevelOrg(3)'>";
 				        $.each(data, function(i, item) {
 				        	orgBodyInfo += "<option value="+item.id+">"+item.displayName+"</option>";
 				        });
@@ -753,7 +754,36 @@ function initOrg(){
 			    });
 				break;
 			case 3:
-				
+				var parentId = $("#second_org_level").find("option:selected").val();
+				$.getJSON("/manage/getAllRegisteOrgsByParentId?parentId="+parentId, function(data) {
+					if(data.length!=0){
+						  $("#third_org_level").show();
+						  $("#third_org_level").html("");//清空info内容
+						  var orgBodyInfo = "";
+						  orgBodyInfo += "<select name='thirdOrgId' class='form-control' onchange='getChildOrgByFirstLevelOrg(4)'>";
+					        $.each(data, function(i, item) {
+					        	orgBodyInfo += "<option value="+item.id+">"+item.displayName+"</option>";
+					        });
+					        orgBodyInfo += "</select>";
+					        $("#third_org_level").html(orgBodyInfo);
+					}
+			    });
+				break;
+			case 4:
+				var parentId = $("#third_org_level").find("option:selected").val();
+				$.getJSON("/manage/getAllRegisteOrgsByParentId?parentId="+parentId, function(data) {
+					if(data.length!=0){
+						  $("#forth_org_level").show();
+						  $("#forth_org_level").html("");//清空info内容
+						  var orgBodyInfo = "";
+						  orgBodyInfo += "<select name='forthOrgId'  class='form-control' onchange='getChildOrgByFirstLevelOrg(5)'>";
+					        $.each(data, function(i, item) {
+					        	orgBodyInfo += "<option value="+item.id+">"+item.displayName+"</option>";
+					        });
+					        orgBodyInfo += "</select>";
+					        $("#forth_org_level").html(orgBodyInfo);
+					}
+			    });
 				break;
 			default:
 				break;

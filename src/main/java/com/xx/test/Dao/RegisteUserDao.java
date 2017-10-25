@@ -15,6 +15,8 @@ import com.xx.test.Model.RegisterUser;
 public interface RegisteUserDao extends CrudRepository<RegisterUser, Long>{
     
 	     public List<RegisterUser> findByManageOrgId(Long id) ;
+
+		  public List<RegisterUser> findByParentOrgId(Long orgId);
  
 	
 }

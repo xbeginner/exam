@@ -208,11 +208,25 @@ public class MainController extends BaseController {
 		        registerUser.setIdcard(registeUserForm.getIdcard());
 		        registerUser.setTel(registeUserForm.getTel());
 		        registerUser.setUserName(registeUserForm.getUserName());
-		        if(request.getParameter("org")!=null){
-		            Long id = Long.valueOf(request.getParameter("org"));
- 		            registerUser.setManageOrgId(id);
+		        registerUser.setPartyLog(Integer.valueOf(request.getParameter("partyLog")));
+		        registerUser.setPbcGender(Integer.valueOf(request.getParameter("gender")));
+		        registerUser.setPbcPoliticalLevel(request.getParameter("pbcPoliticalLevel"));
+		        if(request.getParameter("forthOrgId")!=null){
+		        	registerUser.setManageOrgId(Long.valueOf(request.getParameter("forthOrgId")));
+		        	registerUser.setParentOrgId(Long.valueOf(request.getParameter("thirdOrgId")));
+		        }else{
+		        	 if(request.getParameter("thirdOrgId")!=null){
+				        	registerUser.setManageOrgId(Long.valueOf(request.getParameter("thirdOrgId")));
+				        	registerUser.setParentOrgId(Long.valueOf(request.getParameter("secondOrgId")));
+				        }else{
+				        	  if(request.getParameter("secondOrgId")!=null){
+						        	registerUser.setManageOrgId(Long.valueOf(request.getParameter("secondOrgId")));
+						        	registerUser.setParentOrgId(Long.valueOf(request.getParameter("firstOrgId")));
+						        }
+				        }
+				      
 		        }
-		         this.registeUserService.saveRegisteUser(registerUser);
+		        this.registeUserService.saveRegisteUser(registerUser);
 		         return "redirect:/success";
 		    }
 			 
@@ -247,6 +261,23 @@ public class MainController extends BaseController {
 		    }
 		    
 		    
+		    
+		    @GetMapping("/manage/getAllRegisteOrgsByParentId")
+		    @ResponseBody
+		    public String getAllRegisteOrgsByParentId(HttpServletRequest request , HttpServletResponse response) {
+		    	String json = "[";
+		    	Long id = Long.valueOf(request.getParameter("parentId"));
+		    	List<Org> orgs = this.orgService.findOrgListByParentId(id);
+		    	if(!orgs.isEmpty()){
+		    		for(Org o:orgs){
+			    		json += o.getOrgJson();
+			    		json += ",";
+			    	}
+			    	json = json.substring(0,json.length()-1);
+		    	}
+		    	json += "]";
+		        return json;
+		    }
 		    
 		    @GetMapping("/index/showOwnOrgList")
 		    @ResponseBody
@@ -349,6 +380,10 @@ public class MainController extends BaseController {
 		    	}
 		    	for(RegisterUser user:registUsers){
 		    		   json += user.getRegisteUserJson();
+		    		   json = json.substring(0, json.length()-1);
+		    		   Org org = orgService.findOrgById(user.getManageOrgId());
+		    		   json += ",\"orgName\":"+"\""+org.getName()+"\"";
+		    		   json += "}";
 		    		   json += ",";
 		    	}
 		    	json = json.substring(0, json.length()-1);
@@ -394,7 +429,11 @@ public class MainController extends BaseController {
 		    	userInfo.setPassword("123456");
 		    	userInfo.setTel(reUser.getTel());
 		    	userInfo.setUserName(reUser.getUserName());
-		    	
+		    	userInfo.setOu(org.getOu());
+		    	userInfo.setParentOrgId(reUser.getParentOrgId());
+		    	userInfo.setPbcGender(reUser.getPbcGender());
+		    	userInfo.setPbcPoliticalLevel(reUser.getPbcPoliticalLevel());
+		    	userInfo.setStatus(1);
 		    	this.userInfoService.saveUserInfo(userInfo);
 		    	registeUserService.deleteRegisteUser(userId);
 		    	return SUCCESS;
